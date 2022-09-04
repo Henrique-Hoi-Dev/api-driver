@@ -20,9 +20,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      company_position: {
+      type_position: {
         type: Sequelize.ENUM,
-        values: ['master', 'director',  'manager', 'collaborator'],
+        values: ['master', 'director', 'manager', 'collaborator'],
         defaultValue: null,
       },
       password_hash: {

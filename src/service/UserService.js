@@ -40,7 +40,7 @@ export default {
         'id', 
         'name', 
         'email', 
-        'company_position', 
+        'type_position', 
         'cpf',
       ], 
     });
@@ -57,7 +57,7 @@ export default {
         'id',
         'name', 
         'email', 
-        'company_position', 
+        'type_position', 
         'cpf',
       ],  
     });
@@ -114,7 +114,7 @@ export default {
         'id',
         'name', 
         'email', 
-        'company_position', 
+        'type_position', 
         'cpf', 
       ],
     });

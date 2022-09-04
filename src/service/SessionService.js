@@ -35,9 +35,9 @@ export default {
       return result
     }
 
-    const { id, name, company_position, cpf, date_birth } = user;
+    const { id, name, type_position, cpf } = user;
 
-    const users = { id, name, email, company_position, cpf, date_birth },
+    const users = { id, name, email, type_position, cpf },
       token = jwt.sign({ id }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
     });
