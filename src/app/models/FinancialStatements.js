@@ -6,10 +6,16 @@ class FinancialStatements extends Model {
       {
         driver_id: Sequelize.INTEGER,
         truck_id: Sequelize.INTEGER,
+        start_km: Sequelize.DOUBLE,
+        final_km: Sequelize.DOUBLE,
+        start_date: Sequelize.DATEONLY,
+        final_date: Sequelize.DATEONLY,
         driver_name: Sequelize.STRING,
-        invoicing: Sequelize.DOUBLE,
-        start_trip: Sequelize.DATEONLY,
-        medium_fuel: Sequelize.DOUBLE,
+        truck_models: Sequelize.STRING,
+        truck_avatar: Sequelize.STRING,
+        truck_board: Sequelize.STRING,
+        invoicing_all: Sequelize.DOUBLE,
+        medium_fuel_all: Sequelize.DOUBLE,
       },
       {
         sequelize,
@@ -19,11 +25,10 @@ class FinancialStatements extends Model {
     return this;
   }
 
-  // static associate(models) {
-  //   this.hasOne(models.Adress, { foreignKey: 'user_id', as: 'adress' });
-  //   this.hasMany(models.FinancialBox, { foreignKey: 'user_id', as: 'financialBox' });
-  //   this.hasMany(models.Order, { foreignKey: 'seller_id', as: 'order' });
-  // }
+  static associate(models) {
+    this.belongsTo(models.Driver, { foreignKey: 'driver_id', as: 'driver' });
+    this.belongsTo(models.Truck, { foreignKey: 'truck_id', as: 'truck' });
+  }
 }
 
 export default FinancialStatements;

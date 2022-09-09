@@ -4,6 +4,7 @@ import httpStatus from 'http-status-codes';
 
 import User from '../app/models/User';
 import authConfig from '../config/auth';
+import Driver from '../app/models/Driver';
 
 export default {
 
@@ -38,6 +39,45 @@ export default {
     const { id, name, type_position, cpf } = user;
 
     const users = { id, name, email, type_position, cpf },
+      token = jwt.sign({ id }, authConfig.secret, {
+      expiresIn: authConfig.expiresIn,
+    });
+
+    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: {users, token} }      
+    return result
+  },
+
+  async sessionDriver(req, res) {
+    let result = {}
+    let body = req
+
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      password: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(body))) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Validation failed!' };
+      return result
+    }
+
+    const { name, password } = body;
+    
+    const driver = await Driver.findOne({  where: { name } });
+
+    if (!driver) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
+      return result
+    }
+
+    if (!(await driver.checkPassword(password))) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Password is incorrect' }      
+      return result
+    }
+
+    const { id, cpf, date_admission } = driver;
+
+    const users = { id, name, cpf, date_admission },
       token = jwt.sign({ id }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
     });

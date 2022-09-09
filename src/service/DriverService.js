@@ -7,6 +7,16 @@ export default {
     let result = {}
     let driverBody = req;
 
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      password: Yup.string().required().min(6),
+    });
+
+    if (!(await schema.isValid(driverBody))) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Validation failed!' };
+      return result
+    }
+
     const driver = await Driver.create(driverBody);
 
     if (!driver) {
@@ -21,19 +31,41 @@ export default {
   async getAllDriver(req, res) {
     let result = {}
 
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'name' } = req.query;
+    const total = (await Driver.findAll()).length;
+
+    const totalPages = Math.ceil(total / limit);
+
     const drivers = await Driver.findAll({
+      order: [[ sort_field, sort_order ]],
+      limit: limit,
+      offset: (page - 1) ? (page - 1) * limit : 0,
       attributes: [ 
-        'id', 
+        'id',
         'name', 
-        'set', 
+        'conjunto', 
         'number_cnh', 
-        'valid_cnh',
-        'valid_mopp',
-        'cpf'
+        'valid_cnh', 
+        'date_valid_mopp', 
+        'date_valid_nr20', 
+        'date_valid_nr35', 
+        'cpf', 
+        'date_admission', 
+        'date_birthday', 
       ], 
     });
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: drivers }      
+    const currentPage = Number(page)
+
+    result = { 
+      httpStatus: httpStatus.OK, 
+      status: "successful", 
+      total, 
+      totalPages, 
+      currentPage, 
+      dataResult: drivers 
+    } 
+
     return result
   },
 
@@ -42,13 +74,17 @@ export default {
 
     let driver = await Driver.findByPk(req.id, {
       attributes: [ 
-        'id', 
+        'id',
         'name', 
-        'set', 
+        'conjunto', 
         'number_cnh', 
-        'valid_cnh',
-        'valid_mopp',
-        'cpf'
+        'valid_cnh', 
+        'date_valid_mopp', 
+        'date_valid_nr20', 
+        'date_valid_nr35', 
+        'cpf', 
+        'date_admission', 
+        'date_birthday', 
       ],  
     });
 
@@ -59,12 +95,11 @@ export default {
   async updateDriver(req, res) {   
     let result = {}
 
-    let users = req
-    let userId = res.id
+    let drivers = req
+    let driverId = res.id
 
     const schema = Yup.object().shape({
         name: Yup.string(),
-        email: Yup.string().email(),
         oldPassword: Yup.string().min(8),
         password: Yup.string().min(8)
         .when('oldPassword', (oldPassword, field) =>
@@ -74,42 +109,39 @@ export default {
       ),
     });
 
-    if (!(await schema.isValid(users))) {
+    if (!(await schema.isValid(drivers))) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Validation failed!' };
       return result
     }
 
-    const { email, oldPassword } = users ;
+    const { oldPassword } = drivers ;
     
-    const user = await Driver.findByPk(userId);
-    
-    if (email !== user.dataValues.email) {
-      const userExist = await Driver.findOne({ where: { email } });
+    const driver = await Driver.findByPk(driverId);
 
-      if (userExist) {
-        result = { httpStatus: httpStatus.CONFLICT, msg: 'This user email already exists.' };
-        return result;
-      }
-    }
-
-    if (oldPassword && !(await user.checkPassword(oldPassword))) {
+    if (oldPassword && !(await driver.checkPassword(oldPassword))) {
       result = { httpStatus: httpStatus.METHOD_FAILURE, msg: 'Password does not match!' };
       return result;
     }
 
-    await user.update(users);
+    await driver.update(drivers);
 
-    const userResult = await Driver.findByPk(userId, {
+    const driverResult = await Driver.findByPk(driverId, {
       attributes: [
         'id',
         'name', 
-        'email', 
-        'type_position', 
+        'conjunto', 
+        'number_cnh', 
+        'valid_cnh', 
+        'date_valid_mopp', 
+        'date_valid_nr20', 
+        'date_valid_nr35', 
         'cpf', 
+        'date_admission', 
+        'date_birthday', 
       ],
     });
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: userResult }      
+    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: driverResult }      
     return result
   },
   
@@ -125,11 +157,11 @@ export default {
     });
 
     if (!drivers) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'user not found' }      
+      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
       return result
     }
 
-    result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted user' }}      
+    result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted driver' }}      
     return result
   }
 }

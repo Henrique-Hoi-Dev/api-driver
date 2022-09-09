@@ -6,8 +6,9 @@ class Truck extends Model {
       {
         truck_models: Sequelize.STRING,
         truck_board: Sequelize.STRING,
-        truck_km: Sequelize.STRING,
-        truck_year: Sequelize.DATEONLY,
+        truck_km: Sequelize.DOUBLE,
+        truck_year: Sequelize.STRING,
+        truck_avatar: Sequelize.STRING,
       },
       {
         sequelize,
@@ -17,11 +18,9 @@ class Truck extends Model {
     return this;
   }
 
-  // static associate(models) {
-  //   this.hasOne(models.Adress, { foreignKey: 'user_id', as: 'adress' });
-  //   this.hasMany(models.FinancialBox, { foreignKey: 'user_id', as: 'financialBox' });
-  //   this.hasMany(models.Order, { foreignKey: 'seller_id', as: 'order' });
-  // }
+  static associate(models) {
+    this.hasMany(models.FinancialStatements, { foreignKey: 'truck_id', as: 'financialStatements' });
+  }
 }
 
 export default Truck;

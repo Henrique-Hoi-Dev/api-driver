@@ -19,7 +19,7 @@ class DriverController {
 
   async getAllDriver(req, res) {
     try {
-      let response = await DriverService.getAllDriver();
+      let response = await DriverService.getAllDriver(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);

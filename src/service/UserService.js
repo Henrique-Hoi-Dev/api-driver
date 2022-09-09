@@ -35,7 +35,15 @@ export default {
   async getAllUser(req, res) {
     let result = {}
 
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'name' } = req.query;
+    const total = (await User.findAll()).length;
+
+    const totalPages = Math.ceil(total / limit)
+
     const users = await User.findAll({
+      order: [[ sort_field, sort_order ]],
+      limit: limit,
+      offset: (page - 1) ? (page - 1) * limit : 0,
       attributes: [ 
         'id', 
         'name', 
@@ -45,7 +53,17 @@ export default {
       ], 
     });
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: users }      
+    const currentPage = Number(page)
+
+    result = { 
+      httpStatus: httpStatus.OK, 
+      status: "successful", 
+      total, 
+      totalPages, 
+      currentPage, 
+      dataResult: users 
+    } 
+    
     return result
   },
 
@@ -135,7 +153,7 @@ export default {
     });
 
     if (!users) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'user not found' }      
+      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'User not found' }      
       return result
     }
 

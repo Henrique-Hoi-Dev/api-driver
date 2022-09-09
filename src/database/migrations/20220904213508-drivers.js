@@ -11,20 +11,32 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      set: {
+      password_hash: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      conjunto: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       number_cnh: {
         type: Sequelize.STRING,
         allowNull: true,
       },
       valid_cnh: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
-      valid_mopp: {
-        type: Sequelize.STRING,
+      date_valid_mopp: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      date_valid_nr20: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      date_valid_nr35: {
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       cpf: {
@@ -32,11 +44,11 @@ module.exports = {
         allowNull: true,
       },
       date_admission: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       date_birthday: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       created_at: {

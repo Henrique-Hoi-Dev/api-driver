@@ -19,7 +19,7 @@ class UserController {
 
   async getAllUser(req, res) {
     try {
-      let response = await UserService.getAllUser();
+      let response = await UserService.getAllUser(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);

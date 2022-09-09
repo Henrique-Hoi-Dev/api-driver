@@ -1,10 +1,10 @@
-import TruckService from '../../service/TruckService';
+import FinancialStatementsService from '../../service/FinancialStatementsService';
 
-class TruckController {
+class FinancialStatementsController {
 
-  async createTruck(req, res) {
+  async createFinancialStatements(req, res) {
     try {
-      let response = await TruckService.createTruck(req.body);
+      let response = await FinancialStatementsService.createFinancialStatements(req.body);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -17,9 +17,9 @@ class TruckController {
     }
   }
 
-  async getAllTruck(req, res) {
+  async getAllFinancialStatements(req, res) {
     try {
-      let response = await TruckService.getAllTruck(req, res);
+      let response = await FinancialStatementsService.getAllFinancialStatements(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -32,9 +32,9 @@ class TruckController {
     }
   }
 
-  async getIdTruck(req, res) { 
+  async getIdFinancialStatements(req, res) { 
     try {
-      let response = await TruckService.getIdTruck(req.params);
+      let response = await FinancialStatementsService.getIdFinancialStatements(req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -47,9 +47,9 @@ class TruckController {
     }
   }
 
-  async updateTruck(req, res) {
+  async updateFinancialStatements(req, res) {
     try {
-      let response = await TruckService.updateTruck(req.body, req.params);
+      let response = await FinancialStatementsService.updateFinancialStatements(req.body, req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -62,9 +62,9 @@ class TruckController {
     }
   } 
 
-  async deleteTruck(req, res) {
+  async deleteFinancialStatements(req, res) {
     try {
-      let response = await TruckService.deleteTruck(req.params);
+      let response = await FinancialStatementsService.deleteFinancialStatements(req.params);
 
       return res.send(response);
     } catch (error) {
@@ -73,4 +73,4 @@ class TruckController {
   }
 }
 
-export default new TruckController();
+export default new FinancialStatementsController();

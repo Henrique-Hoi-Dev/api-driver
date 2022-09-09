@@ -21,20 +21,44 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      start_km: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      final_km: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      start_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      final_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
       driver_name: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      invoicing: {
+      truck_models: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      truck_board: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      truck_avatar: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      invoicing_all: {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
-      medium_fuel: {
+      medium_fuel_all: {
         type: Sequelize.DOUBLE,
-        allowNull: true,
-      },
-      start_trip: {
-        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       created_at: {
