@@ -28,6 +28,7 @@ class FinancialStatements extends Model {
   static associate(models) {
     this.belongsTo(models.Driver, { foreignKey: 'driver_id', as: 'driver' });
     this.belongsTo(models.Truck, { foreignKey: 'truck_id', as: 'truck' });
+    this.hasMany(models.Freight, { foreignKey: 'financial_statements_id', as: 'financialStatements' });
   }
 }
 

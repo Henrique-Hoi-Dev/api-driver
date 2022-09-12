@@ -4,6 +4,7 @@ import SessionController from './app/controller/SessionController';
 import UserController from './app/controller/UserController';
 import DriverController from './app/controller/DriverController';
 import TruckController from './app/controller/TruckController';
+import FreightController from './app/controller/FreightController';
 import FinancialStatementsController from './app/controller/FinancialStatementsController';
 
 import authMiddleware from './app/middlewares/auth';
@@ -45,5 +46,11 @@ routes.post('/financialStatement', FinancialStatementsController.createFinancial
       .get('/financialStatements', FinancialStatementsController.getAllFinancialStatements)
       .delete('/financialStatement/:id', FinancialStatementsController.deleteFinancialStatements);
 
+// freight
+routes.post('/freight', FreightController.createFreight)
+      .put('/freight/:id', FreightController.updateFreight)
+      .get('/freight/:id', FreightController.getIdFreight)
+      .get('/freights', FreightController.getAllFreight)
+      .delete('/freight/:id', FreightController.deleteFreight);
 
 export default routes;

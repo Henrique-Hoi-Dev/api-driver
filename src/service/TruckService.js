@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import Truck from "../app/models/Truck";
 import httpStatus from 'http-status-codes';
 
