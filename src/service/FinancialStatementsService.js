@@ -22,8 +22,8 @@ export default {
       return result
     }
 
-    const driver_name = driver?.dataValues?.name
-    const { truck_models, truck_board, truck_avatar } = truck?.dataValues
+    const driver_name = driver.dataValues.name
+    const { truck_models, truck_board, truck_avatar } = truck.dataValues
 
     const body = { 
       driver_id, 
