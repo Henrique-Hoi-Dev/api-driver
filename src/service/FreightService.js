@@ -89,6 +89,11 @@ export default {
       ],  
     });
 
+    if (!freight) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Freight not found' }}      
+      return result
+    }
+
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freight }      
     return result
   },
@@ -141,7 +146,7 @@ export default {
     });
 
     if (!freight) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' }      
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Freight not found' }}      
       return result
     }
 

@@ -1,5 +1,14 @@
 import Sequelize from 'sequelize';
+
 import User from '../app/models/User';
+import Driver from '../app/models/Driver';
+import Truck from '../app/models/Truck';
+import Freight from '../app/models/Freight';
+import Restock from '../app/models/Restock';
+import TravelExpenses from '../app/models/TravelExpenses';
+import DepositMoney from '../app/models/DepositMoney';
+import FinancialStatements from '../app/models/FinancialStatements';
+
 import "dotenv/config"
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -17,9 +26,16 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   },
 });
 
-//check connection (optional)
+// check connection (optional)
 const models = [ 
-  User, 
+  User,
+  Driver,
+  Truck,
+  Freight,
+  DepositMoney,
+  FinancialStatements,
+  TravelExpenses,
+  Restock,
 ];
 
 models

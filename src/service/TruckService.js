@@ -67,6 +67,11 @@ export default {
       ],  
     });
 
+    if (!truck) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Truck not found' }}      
+      return result
+    }
+
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: truck }      
     return result
   },
@@ -100,14 +105,14 @@ export default {
     
     const id  = req.id;
 
-    const trucks = await Truck.destroy({
+    const truck = await Truck.destroy({
       where: {
         id: id,
       },
     });
 
-    if (!trucks) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'Truck not found' }      
+    if (!truck) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Truck not found' }}      
       return result
     }
 

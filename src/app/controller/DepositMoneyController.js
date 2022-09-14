@@ -1,10 +1,10 @@
-import FinancialStatementsService from '../../service/FinancialStatementsService';
+import DepositMoneyService from '../../service/DepositMoneyService';
 
-class FinancialStatementsController {
+class DepositMoneyController {
 
-  async createFinancialStatements(req, res) {
+  async createDepositMoney(req, res) {
     try {
-      let response = await FinancialStatementsService.createFinancialStatements(req.body);
+      let response = await DepositMoneyService.createDepositMoney(req.body);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -17,9 +17,9 @@ class FinancialStatementsController {
     }
   }
 
-  async getAllFinancialStatements(req, res) {
+  async getAllDepositMoney(req, res) {
     try {
-      let response = await FinancialStatementsService.getAllFinancialStatements(req, res);
+      let response = await DepositMoneyService.getAllDepositMoney(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -32,9 +32,9 @@ class FinancialStatementsController {
     }
   }
 
-  async getIdFinancialStatements(req, res) { 
+  async getIdDepositMoney(req, res) { 
     try {
-      let response = await FinancialStatementsService.getIdFinancialStatements(req.params);
+      let response = await DepositMoneyService.getIdDepositMoney(req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -47,14 +47,14 @@ class FinancialStatementsController {
     }
   }
 
-  async updateFinancialStatements(req, res) {
+  async updateDepositMoney(req, res) {
     try {
-      let response = await FinancialStatementsService.updateFinancialStatements(req.body, req.params);
+      let response = await DepositMoneyService.updateDepositMoney(req.body, req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json({ msg: response.responseData })
       }
 
     } catch (error) {
@@ -62,9 +62,9 @@ class FinancialStatementsController {
     }
   } 
 
-  async deleteFinancialStatements(req, res) {
+  async deleteDepositMoney(req, res) {
     try {
-      let response = await FinancialStatementsService.deleteFinancialStatements(req.params);
+      let response = await DepositMoneyService.deleteDepositMoney(req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -78,4 +78,4 @@ class FinancialStatementsController {
   }
 }
 
-export default new FinancialStatementsController();
+export default new DepositMoneyController();

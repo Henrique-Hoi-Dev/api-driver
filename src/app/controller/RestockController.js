@@ -1,10 +1,10 @@
-import FinancialStatementsService from '../../service/FinancialStatementsService';
+import RestockService from '../../service/RestockService';
 
-class FinancialStatementsController {
+class RestockController {
 
-  async createFinancialStatements(req, res) {
+  async createRestock(req, res) {
     try {
-      let response = await FinancialStatementsService.createFinancialStatements(req.body);
+      let response = await RestockService.createRestock(req.body);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -17,9 +17,9 @@ class FinancialStatementsController {
     }
   }
 
-  async getAllFinancialStatements(req, res) {
+  async getAllRestock(req, res) {
     try {
-      let response = await FinancialStatementsService.getAllFinancialStatements(req, res);
+      let response = await RestockService.getAllRestock(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -32,9 +32,9 @@ class FinancialStatementsController {
     }
   }
 
-  async getIdFinancialStatements(req, res) { 
+  async getIdRestock(req, res) { 
     try {
-      let response = await FinancialStatementsService.getIdFinancialStatements(req.params);
+      let response = await RestockService.getIdRestock(req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -47,14 +47,14 @@ class FinancialStatementsController {
     }
   }
 
-  async updateFinancialStatements(req, res) {
+  async updateRestock(req, res) {
     try {
-      let response = await FinancialStatementsService.updateFinancialStatements(req.body, req.params);
+      let response = await RestockService.updateRestock(req.body, req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
 
     } catch (error) {
@@ -62,9 +62,9 @@ class FinancialStatementsController {
     }
   } 
 
-  async deleteFinancialStatements(req, res) {
+  async deleteRestock(req, res) {
     try {
-      let response = await FinancialStatementsService.deleteFinancialStatements(req.params);
+      let response = await RestockService.deleteRestock(req.params);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -78,4 +78,4 @@ class FinancialStatementsController {
   }
 }
 
-export default new FinancialStatementsController();
+export default new RestockController();

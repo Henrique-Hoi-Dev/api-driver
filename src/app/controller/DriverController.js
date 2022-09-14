@@ -39,7 +39,7 @@ class DriverController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
 
     } catch (error) {
@@ -66,7 +66,12 @@ class DriverController {
     try {
       let response = await DriverService.deleteDriver(req.params);
 
-      return res.send(response);
+      if (response.httpStatus === 200) {
+        return res.send(response);
+      } else {
+        return res.status(response.httpStatus).json(response)
+      }
+
     } catch (error) {
       return res.status(200).json({ mgs: error.message})
     }

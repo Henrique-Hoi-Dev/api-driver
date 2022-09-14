@@ -39,7 +39,7 @@ class FreightController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
 
     } catch (error) {
@@ -66,7 +66,12 @@ class FreightController {
     try {
       let response = await FreightService.deleteFreight(req.params);
 
-      return res.send(response);
+      if (response.httpStatus === 200) {
+        return res.send(response);
+      } else {
+        return res.status(response.httpStatus).json(response)
+      }
+
     } catch (error) {
       return res.status(200).json({ mgs: error.message})
     }

@@ -105,6 +105,11 @@ export default {
       ],
     });
 
+    if (!financialStatement) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Financial Statements not found' }}      
+      return result
+    }
+
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: financialStatement }      
     return result
   },
@@ -146,14 +151,14 @@ export default {
     
     const id  = req.id;
 
-    const financialStatements = await FinancialStatements.destroy({
+    const financialStatement = await FinancialStatements.destroy({
       where: {
         id: id,
       },
     });
 
-    if (!financialStatements) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial Statements not found' }      
+    if (!financialStatement) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Financial Statements not found' }}      
       return result
     }
 

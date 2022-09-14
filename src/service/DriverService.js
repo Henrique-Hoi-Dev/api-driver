@@ -88,6 +88,11 @@ export default {
       ],  
     });
 
+    if (!driver) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Driver not found' }}      
+      return result
+    }
+
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: driver }      
     return result
   },
@@ -150,14 +155,14 @@ export default {
     
     const id  = req.id;
 
-    const drivers = await Driver.destroy({
+    const driver = await Driver.destroy({
       where: {
         id: id,
       },
     });
 
-    if (!drivers) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
+    if (!driver) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Driver not found' }}      
       return result
     }
 

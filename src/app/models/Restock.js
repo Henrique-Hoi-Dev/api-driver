@@ -1,13 +1,13 @@
 import Sequelize, { Model } from 'sequelize';
 
-class TravelExpenses extends Model {
+class Restock extends Model {
   static init(sequelize) {
     super.init(
       {
         financial_statements_id: Sequelize.INTEGER,
-        type_establishment: Sequelize.STRING,
         name_establishment: Sequelize.STRING,
-        expense_description: Sequelize.STRING,
+        city: Sequelize.STRING,
+        date: Sequelize.DATEONLY,
         value: Sequelize.DOUBLE,
         proof_img: Sequelize.STRING,
       },
@@ -24,4 +24,4 @@ class TravelExpenses extends Model {
   }
 }
 
-export default TravelExpenses;
+export default Restock;

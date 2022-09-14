@@ -80,6 +80,11 @@ export default {
       ],  
     });
 
+    if (!user) {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'User not found' }}      
+      return result
+    }
+
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: user }      
     return result
   },
@@ -153,7 +158,7 @@ export default {
     });
 
     if (!users) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, msg: 'User not found' }      
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'User not found' }}      
       return result
     }
 

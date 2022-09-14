@@ -5,6 +5,9 @@ import UserController from './app/controller/UserController';
 import DriverController from './app/controller/DriverController';
 import TruckController from './app/controller/TruckController';
 import FreightController from './app/controller/FreightController';
+import DepositMoneyController from './app/controller/DepositMoneyController';
+import TravelExpensesController from './app/controller/TravelExpensesController';
+import RestockController from './app/controller/RestockController';
 import FinancialStatementsController from './app/controller/FinancialStatementsController';
 
 import authMiddleware from './app/middlewares/auth';
@@ -51,6 +54,27 @@ routes.post('/freight', FreightController.createFreight)
       .put('/freight/:id', FreightController.updateFreight)
       .get('/freight/:id', FreightController.getIdFreight)
       .get('/freights', FreightController.getAllFreight)
-      .delete('/freight/:id', FreightController.deleteFreight);
+      .delete('/freight/:id', FreightController.deleteFreight)
+
+// deposit money
+routes.post('/deposit', DepositMoneyController.createDepositMoney)
+      .put('/deposit/:id', DepositMoneyController.updateDepositMoney)
+      .get('/deposit/:id', DepositMoneyController.getIdDepositMoney)
+      .get('/deposits', DepositMoneyController.getAllDepositMoney)
+      .delete('/deposit/:id', DepositMoneyController.deleteDepositMoney);
+
+// travel expenses
+routes.post('/travel', TravelExpensesController.createTravelExpenses)
+      .put('/travel/:id', TravelExpensesController.updateTravelExpenses)
+      .get('/travel/:id', TravelExpensesController.getIdTravelExpenses)
+      .get('/travels', TravelExpensesController.getAllTravelExpenses)
+      .delete('/travel/:id', TravelExpensesController.deleteTravelExpenses);
+
+// restock
+routes.post('/restock', RestockController.createRestock)
+      .put('/restock/:id', RestockController.updateRestock)
+      .get('/restock/:id', RestockController.getIdRestock)
+      .get('/restocks', RestockController.getAllRestock)
+      .delete('/restock/:id', RestockController.deleteRestock);
 
 export default routes;

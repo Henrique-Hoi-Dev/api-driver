@@ -39,7 +39,7 @@ class UserController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
 
     } catch (error) {
@@ -65,8 +65,13 @@ class UserController {
   async deleteUser(req, res) {
     try {
       let response = await UserService.deleteUser(req.params);
+      
+      if (response.httpStatus === 200) {
+        return res.send(response);
+      } else {
+        return res.status(response.httpStatus).json(response)
+      }
 
-      return res.send(response);
     } catch (error) {
       return res.status(200).json({ mgs: error.message})
     }
