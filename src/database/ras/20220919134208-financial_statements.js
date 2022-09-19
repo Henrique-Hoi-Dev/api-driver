@@ -21,6 +21,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      cart_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'carts', key: 'id' },
+        allowNull: true,
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       start_km: {
         type: Sequelize.DOUBLE,
         allowNull: true,
@@ -58,6 +65,10 @@ module.exports = {
         allowNull: true,
       },
       medium_fuel_all: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      total_value: {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },

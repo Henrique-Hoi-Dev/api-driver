@@ -1,28 +1,42 @@
 import * as Yup from 'yup';
-import Driver from "../app/models/Driver";
 import httpStatus from 'http-status-codes';
+
+import Driver from "../app/models/Driver";
+import Truck from "../app/models/Truck";
+import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createDriver(req, res) {
     let result = {}
-    let driverBody = req;
+
+    let { name_user, password, name } = req;
+
+    let body = { 
+      name_user: name_user.toLowerCase(), 
+      password, 
+      name, 
+      type_position: "collaborator" 
+    }
+
+    // doing name user verification
+    const driverExist = await Driver.findOne({ where: { name_user: body.name_user } });
+
+    if (driverExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This driver name user already exists.' };
+      return result;
+    }
 
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      name_user: Yup.string().required(),
       password: Yup.string().required().min(6),
     });
 
-    if (!(await schema.isValid(driverBody))) {
+    if (!(await schema.isValid(body))) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Validation failed!' };
       return result
     }
 
-    const driver = await Driver.create(driverBody);
-
-    if (!driver) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Fail to create' }      
-      return result
-    }
+    await Driver.create(body);
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
@@ -31,7 +45,7 @@ export default {
   async getAllDriver(req, res) {
     let result = {}
 
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'name' } = req.query;
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
     const total = (await Driver.findAll()).length;
 
     const totalPages = Math.ceil(total / limit);
@@ -42,17 +56,13 @@ export default {
       offset: (page - 1) ? (page - 1) * limit : 0,
       attributes: [ 
         'id',
-        'name', 
-        'conjunto', 
-        'number_cnh', 
-        'valid_cnh', 
-        'date_valid_mopp', 
-        'date_valid_nr20', 
-        'date_valid_nr35', 
-        'cpf', 
-        'date_admission', 
-        'date_birthday', 
-      ], 
+        'name',
+      ],
+      include: {
+        model: FinancialStatements,
+        as: "financialStatements",
+        attributes: [ "truck_models" ]
+      },
     });
 
     const currentPage = Number(page)
@@ -63,7 +73,7 @@ export default {
       total, 
       totalPages, 
       currentPage, 
-      dataResult: drivers 
+      dataResult: drivers
     } 
 
     return result
@@ -106,11 +116,8 @@ export default {
     const schema = Yup.object().shape({
         name: Yup.string(),
         oldPassword: Yup.string().min(8),
-        password: Yup.string().min(8)
-        .when('oldPassword', (oldPassword, field) =>
-          oldPassword ? field.required() : field),
-        confirmPassword: Yup.string().when('password', (password, field) =>
-        password ? field.required().oneOf([Yup.ref('password')]) : field
+        password: Yup.string().min(8).when('oldPassword', (oldPassword, field) => oldPassword ? field.required() : field),
+        confirmPassword: Yup.string().when('password', (password, field) => password ? field.required().oneOf([Yup.ref('password')]) : field
       ),
     });
 

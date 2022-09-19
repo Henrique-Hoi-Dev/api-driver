@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('travel_expenses', {
+    return queryInterface.createTable('deposit_moneys', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -14,15 +14,15 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      type_establishment: {
+      type_transaction: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      name_establishment: {
+      local: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      expense_description: {
+      type_bank: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -46,6 +46,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('travel_expenses');
+    return queryInterface.dropTable('deposit_moneys');
   },
 };

@@ -4,14 +4,42 @@ import httpStatus from 'http-status-codes';
 export default {
   async createTruck(req, res) {
     let result = {}
-    let truckBody = req;
+    let {
+      truck_models,
+      truck_name_brand,
+      truck_board,
+      truck_color,
+      truck_km,
+      truck_chassis,
+      truck_year,
+      truck_avatar
+    } = req;
 
-    const truck = await Truck.create(truckBody);
+    const chassisExist = await Truck.findOne({ where: { truck_chassis: truck_chassis } });
+    const boardExist = await Truck.findOne({ where: { truck_board: truck_board } });
 
-    if (!truck) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Fail to create' }      
-      return result
+    if (chassisExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This chassis truck already exists.' };
+      return result;
     }
+
+    if (boardExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This board truck already exists.' };
+      return result;
+    }
+
+    const truckBody = { 
+      truck_models,
+      truck_name_brand,
+      truck_board,
+      truck_color,
+      truck_km,
+      truck_chassis,
+      truck_year,
+      truck_avatar
+    }
+
+    await Truck.create(truckBody);
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
@@ -20,7 +48,7 @@ export default {
   async getAllTruck(req, res) {
     let result = {}
     
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'truck_models' } = req.query;
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
     const total = (await Truck.findAll()).length;
 
     const totalPages = Math.ceil(total / limit);
@@ -31,9 +59,12 @@ export default {
       offset: (page - 1) ? (page - 1) * limit : 0,
       attributes: [ 
         'id', 
-        'truck_models', 
+        'truck_models',
+        'truck_name_brand',
         'truck_board', 
         'truck_km', 
+        'truck_color',
+        'truck_chassis',
         'truck_year',
         'truck_avatar',
       ], 
@@ -59,9 +90,12 @@ export default {
     let truck = await Truck.findByPk(req.id, {
       attributes: [ 
         'id', 
-        'truck_models', 
+        'truck_models',
+        'truck_name_brand',
         'truck_board', 
         'truck_km', 
+        'truck_color',
+        'truck_chassis',
         'truck_year',
         'truck_avatar',
       ],  
@@ -78,21 +112,57 @@ export default {
 
   async updateTruck(req, res) {   
     let result = {}
-
-    let trucks = req
     let truckId = res.id
 
-    const truck = await Truck.findByPk(truckId);
+    let {
+      truck_models,
+      truck_name_brand,
+      truck_board,
+      truck_color,
+      truck_km,
+      truck_chassis,
+      truck_year,
+      truck_avatar
+    } = req;
 
-    await truck.update(trucks);
+    const chassisExist = await Truck.findOne({ where: { truck_chassis: truck_chassis } });
+    const boardExist = await Truck.findOne({ where: { truck_board: truck_board } });
+
+    if (chassisExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This chassis truck already exists.' };
+      return result;
+    }
+
+    if (boardExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This board truck already exists.' };
+      return result;
+    }
+
+    const truckBody = { 
+      truck_models,
+      truck_name_brand,
+      truck_board,
+      truck_color,
+      truck_km,
+      truck_chassis,
+      truck_year,
+      truck_avatar
+    }
+
+    const truck = await Truck.findByPk(truckId);
+    await truck.update(truckBody);
 
     const truckResult = await Truck.findByPk(truckId, {
       attributes: [
-        'id',
-        'truck_models', 
+        'id', 
+        'truck_models',
+        'truck_name_brand',
         'truck_board', 
         'truck_km', 
-        'truck_year', 
+        'truck_color',
+        'truck_chassis',
+        'truck_year',
+        'truck_avatar',
       ],
     });
 

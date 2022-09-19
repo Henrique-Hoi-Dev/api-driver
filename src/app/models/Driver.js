@@ -6,6 +6,7 @@ class Driver extends Model {
     super.init(
       {
         name: Sequelize.STRING,
+        name_user: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
         conjunto: Sequelize.STRING,
@@ -17,6 +18,7 @@ class Driver extends Model {
         cpf: Sequelize.STRING,
         date_admission: Sequelize.DATEONLY,
         date_birthday: Sequelize.DATEONLY,
+        type_position: Sequelize.STRING,
       },
       {
         sequelize,

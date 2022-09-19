@@ -1,37 +1,42 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('restocks', {
+    return queryInterface.createTable('trucks', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      financial_statements_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'financial_statements', key: 'id' },
-        allowNull: true,
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+      truck_models: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
-      name_establishment: {
+      truck_name_brand: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      truck_board: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      truck_color: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      truck_km: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      city: {
+      truck_chassis: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      date: {
-        type: Sequelize.DATEONLY,
+      truck_year: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
-      value: {
-        type: Sequelize.DOUBLE,
-        allowNull: true,
-      },
-      proof_img: {
-        type: Sequelize.DOUBLE,
+      truck_avatar: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       created_at: {
@@ -46,6 +51,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('restocks');
+    return queryInterface.dropTable('trucks');
   },
 };

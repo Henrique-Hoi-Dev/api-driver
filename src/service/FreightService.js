@@ -6,12 +6,7 @@ export default {
     let result = {}
     let freightBody = req;
 
-    const freight = await Freight.create(freightBody);
-
-    if (!freight) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Fail to create' }      
-      return result
-    }
+    await Freight.create(freightBody);
 
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freight }      
     return result

@@ -5,8 +5,11 @@ class Truck extends Model {
     super.init(
       {
         truck_models: Sequelize.STRING,
+        truck_name_brand: Sequelize.STRING,
         truck_board: Sequelize.STRING,
+        truck_color: Sequelize.STRING,
         truck_km: Sequelize.DOUBLE,
+        truck_chassis: Sequelize.DOUBLE,
         truck_year: Sequelize.STRING,
         truck_avatar: Sequelize.STRING,
       },

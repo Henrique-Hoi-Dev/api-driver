@@ -8,6 +8,7 @@ class TravelExpenses extends Model {
         type_establishment: Sequelize.STRING,
         name_establishment: Sequelize.STRING,
         expense_description: Sequelize.STRING,
+        dfe: Sequelize.STRING,
         value: Sequelize.DOUBLE,
         proof_img: Sequelize.STRING,
       },

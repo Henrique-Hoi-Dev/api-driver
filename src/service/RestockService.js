@@ -1,12 +1,42 @@
-import Restock from "../app/models/Restock";
 import httpStatus from 'http-status-codes';
+
+import Restock from "../app/models/Restock";
+import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createRestock(req, res) {
     let result = {}
-    let restockBody = req;
+    let { 
+      financial_statements_id, 
+      name_establishment, 
+      city, 
+      date, 
+      value_fuel, 
+      liters_fuel, 
+      total_nota_value 
+    } = req;
 
-    Restock.create(restockBody);
+    const statements = await FinancialStatements.findByPk(financial_statements_id)
+
+    if (!statements) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial statements not found' }      
+      return result
+    }
+
+    let total_value_fuel = value_fuel * liters_fuel
+
+    let restockBody = { 
+      financial_statements_id, 
+      name_establishment, 
+      value_fuel, 
+      liters_fuel, 
+      city, 
+      date, 
+      total_nota_value, 
+      total_value_fuel 
+    } 
+
+    await Restock.create(restockBody);
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
@@ -29,8 +59,10 @@ export default {
         'name_establishment', 
         'city', 
         'date', 
-        'value', 
-        'proof_img', 
+        'value_fuel', 
+        'liters_fuel', 
+        'total_value_fuel', 
+        'total_nota_value', 
       ], 
     });
 
@@ -57,8 +89,10 @@ export default {
         'name_establishment', 
         'city', 
         'date', 
-        'value', 
-        'proof_img', 
+        'value_fuel', 
+        'liters_fuel', 
+        'total_value_fuel', 
+        'total_nota_value',
       ],  
     });
 

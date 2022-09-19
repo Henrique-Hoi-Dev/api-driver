@@ -1,16 +1,18 @@
-import * as Yup from 'yup';
 import httpStatus from 'http-status-codes';
+
 import FinancialStatements from "../app/models/FinancialStatements";
 import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
+import Cart from '../app/models/Cart';
 
 export default {
   async createFinancialStatements(req, res) {
     let result = {}
-    let { driver_id, truck_id, start_date } = req;
+    let { driver_id, truck_id, cart_id, start_date } = req;
 
     const driver = await Driver.findByPk(driver_id)
     const truck = await Truck.findByPk(truck_id)
+    const cart = await Cart.findByPk(cart_id)
 
     if (!driver) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
@@ -22,8 +24,14 @@ export default {
       return result
     }
 
+    if (!cart) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Cart not found' }      
+      return result
+    }
+
     const driver_name = driver.dataValues.name
     const { truck_models, truck_board, truck_avatar } = truck.dataValues
+    const { cart_models, cart_board } = cart.dataValues
 
     const body = { 
       driver_id, 
@@ -33,6 +41,8 @@ export default {
       truck_models, 
       truck_board, 
       truck_avatar,
+      cart_models,
+      cart_board
     }
 
     await FinancialStatements.create(body);
@@ -44,7 +54,7 @@ export default {
   async getAllFinancialStatements(req, res) {
     let result = {}
 
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'driver_name' } = req.query;
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
     const total = (await FinancialStatements.findAll()).length;
 
     const totalPages = Math.ceil(total / limit);
@@ -65,6 +75,8 @@ export default {
         'truck_models',
         'truck_avatar',
         'truck_board',
+        'cart_models',
+        'cart_board',
         'invoicing_all',
         'medium_fuel_all',
       ],
@@ -100,6 +112,8 @@ export default {
         'truck_models',
         'truck_avatar',
         'truck_board',
+        'cart_models',
+        'cart_board',
         'invoicing_all',
         'medium_fuel_all',
       ],
@@ -137,6 +151,8 @@ export default {
         'truck_models',
         'truck_avatar',
         'truck_board',
+        'cart_models',
+        'cart_board',
         'invoicing_all',
         'medium_fuel_all',
       ],

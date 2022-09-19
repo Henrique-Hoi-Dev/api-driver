@@ -49,10 +49,13 @@ export default {
 
   async sessionDriver(req, res) {
     let result = {}
-    let body = req
+
+    let { name_user, password } = req
+
+    let body = { name_user: name_user.toLowerCase(), password }
 
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      name_user: Yup.string().required(),
       password: Yup.string().required(),
     });
 
@@ -61,12 +64,15 @@ export default {
       return result
     }
 
-    const { name, password } = body;
-    
-    const driver = await Driver.findOne({  where: { name } });
+    const driver = await Driver.findOne({ where: { name_user: body.name_user } });
 
     if (!driver) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
+      return result
+    }
+
+    if (!(driver.dataValues.type_position === "collaborator")) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: "You do not have permission to log into this account" }
       return result
     }
 
@@ -75,14 +81,14 @@ export default {
       return result
     }
 
-    const { id, cpf, date_admission } = driver;
+    const { id, cpf, date_admission, type_position } = driver;
 
-    const users = { id, name, cpf, date_admission },
+    const drivers = { id, name_user, cpf, date_admission, type_position },
       token = jwt.sign({ id }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
     });
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: {users, token} }      
+    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: {drivers, token} }      
     return result
   }
 }

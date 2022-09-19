@@ -4,7 +4,7 @@ class SessionController {
   
   async sessionUser(req, res) {
     try {
-      let response = await SessionService.sessionUser(req.body);
+      let response = await SessionService.sessionUser(req.headers);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -19,7 +19,7 @@ class SessionController {
 
   async sessioDriver(req, res) {
     try {
-      let response = await SessionService.sessionDriver(req.body);
+      let response = await SessionService.sessionDriver(req.headers);
 
       if (response.httpStatus === 200) {
         return res.send(response);

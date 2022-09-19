@@ -7,7 +7,7 @@ export default {
     let result = {}
     let depositMoneyBody = req;
 
-    DepositMoney.create(depositMoneyBody);
+    await DepositMoney.create(depositMoneyBody);
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result

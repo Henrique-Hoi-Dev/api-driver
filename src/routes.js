@@ -9,6 +9,7 @@ import DepositMoneyController from './app/controller/DepositMoneyController';
 import TravelExpensesController from './app/controller/TravelExpensesController';
 import RestockController from './app/controller/RestockController';
 import FinancialStatementsController from './app/controller/FinancialStatementsController';
+import CartController from './app/controller/CartController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -76,5 +77,12 @@ routes.post('/restock', RestockController.createRestock)
       .get('/restock/:id', RestockController.getIdRestock)
       .get('/restocks', RestockController.getAllRestock)
       .delete('/restock/:id', RestockController.deleteRestock);
+
+// cart
+routes.post('/cart', CartController.createCart)
+      .put('/cart/:id', CartController.updateCart)
+      .get('/cart/:id', CartController.getIdCart)
+      .get('/carts', CartController.getAllCart)
+      .delete('/cart/:id', CartController.deleteCart);
 
 export default routes;

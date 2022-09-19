@@ -8,8 +8,10 @@ class Restock extends Model {
         name_establishment: Sequelize.STRING,
         city: Sequelize.STRING,
         date: Sequelize.DATEONLY,
-        value: Sequelize.DOUBLE,
-        proof_img: Sequelize.STRING,
+        value_fuel: Sequelize.DOUBLE,
+        liters_fuel: Sequelize.DOUBLE,
+        total_value_fuel: Sequelize.DOUBLE,
+        total_nota_value: Sequelize.DOUBLE,
       },
       {
         sequelize,

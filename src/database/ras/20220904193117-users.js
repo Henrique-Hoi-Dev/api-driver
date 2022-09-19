@@ -1,31 +1,33 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('trucks', {
+    return queryInterface.createTable('users', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      truck_models: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      truck_board: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
-      truck_km: {
+      cpf: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      truck_year: {
-        type: Sequelize.STRING,
-        allowNull: true,
+      type_position: {
+        type: Sequelize.ENUM,
+        values: ['master', 'director', 'manager', 'collaborator'],
+        defaultValue: null,
       },
-      truck_avatar: {
+      password_hash: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -39,6 +41,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('trucks');
+    return queryInterface.dropTable('users');
   },
 };

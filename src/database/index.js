@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import User from '../app/models/User';
 import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
+import Cart from '../app/models/Cart';
 import Freight from '../app/models/Freight';
 import Restock from '../app/models/Restock';
 import TravelExpenses from '../app/models/TravelExpenses';
@@ -14,6 +15,7 @@ const models = [
   User,
   Driver,
   Truck,
+  Cart,
   Freight,
   DepositMoney,
   FinancialStatements,
