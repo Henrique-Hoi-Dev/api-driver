@@ -117,34 +117,30 @@ export default {
     let {
       truck_models,
       truck_name_brand,
-      truck_board,
       truck_color,
       truck_km,
-      truck_chassis,
       truck_year,
       truck_avatar
     } = req;
 
-    const chassisExist = await Truck.findOne({ where: { truck_chassis: truck_chassis } });
-    const boardExist = await Truck.findOne({ where: { truck_board: truck_board } });
+    // const chassisExist = await Truck.findOne({ where: { truck_chassis: truck_chassis } });
+    // const boardExist = await Truck.findOne({ where: { truck_board: truck_board } });
 
-    if (chassisExist) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'This chassis truck already exists.' };
-      return result;
-    }
+    // if (chassisExist) {
+    //   result = { httpStatus: httpStatus.CONFLICT, msg: 'This chassis truck already exists.' };
+    //   return result;
+    // }
 
-    if (boardExist) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'This board truck already exists.' };
-      return result;
-    }
+    // if (boardExist) {
+    //   result = { httpStatus: httpStatus.CONFLICT, msg: 'This board truck already exists.' };
+    //   return result;
+    // }
 
     const truckBody = { 
       truck_models,
       truck_name_brand,
-      truck_board,
       truck_color,
       truck_km,
-      truck_chassis,
       truck_year,
       truck_avatar
     }

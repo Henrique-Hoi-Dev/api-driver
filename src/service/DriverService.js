@@ -2,7 +2,6 @@ import * as Yup from 'yup';
 import httpStatus from 'http-status-codes';
 
 import Driver from "../app/models/Driver";
-import Truck from "../app/models/Truck";
 import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
