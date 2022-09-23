@@ -8,9 +8,9 @@ class Cart extends Model {
         cart_brand: Sequelize.STRING,
         cart_tara: Sequelize.STRING,
         cart_color: Sequelize.STRING,
-        cart_bodywork: Sequelize.ENUM(
+        cart_bodyworks: Sequelize.ENUM(
           { 
-            values: ['tank', 'bulkCarrier', 'sider', 'chest']
+            values: ['tank', 'bulkCarrier', 'sider', 'chest', 'bucket']
           }
         ),
         cart_year: Sequelize.STRING,

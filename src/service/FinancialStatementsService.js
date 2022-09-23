@@ -35,7 +35,8 @@ export default {
 
     const body = { 
       driver_id, 
-      truck_id, 
+      truck_id,
+      status: true,
       start_date, 
       driver_name, 
       truck_models, 

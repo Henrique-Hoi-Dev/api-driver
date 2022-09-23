@@ -28,6 +28,10 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      status: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
       start_km: {
         type: Sequelize.DOUBLE,
         allowNull: true,
