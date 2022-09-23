@@ -7,6 +7,19 @@ export default {
     let result = {}
     let cartBody = req;
 
+    const chassisExist = await Cart.findOne({ where: { cart_chassis: cartBody.cart_chassis } });
+    const boardExist = await Cart.findOne({ where: { cart_board: cartBody.cart_board } });
+
+    if (chassisExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This chassis cart already exists.' };
+      return result;
+    }
+
+    if (boardExist) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'This board cart already exists.' };
+      return result;
+    }
+
     await Cart.create(cartBody);
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
