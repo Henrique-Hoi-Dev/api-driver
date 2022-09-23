@@ -24,8 +24,9 @@ module.exports = {
         allowNull: false,
       },
       cart_bodywork: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: Sequelize.ENUM,
+        values: ['tank', 'bulkCarrier', 'sider', 'chest'],
+        defaultValue: null,
       },
       cart_year: {
         type: Sequelize.STRING,
