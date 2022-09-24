@@ -60,7 +60,7 @@ export default {
       include: {
         model: FinancialStatements,
         as: "financialStatements",
-        attributes: [ "truck_models" ]
+        attributes: [ "truck_models", "total_value" ]
       },
     });
 

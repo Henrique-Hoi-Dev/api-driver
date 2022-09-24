@@ -1,14 +1,25 @@
-import Freight from "../app/models/Freight";
 import httpStatus from 'http-status-codes';
+
+import Freight from "../app/models/Freight";
+import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createFreight(req, res) {
     let result = {}
     let freightBody = req;
 
+    freightBody.first_check_order = true
+
+    const financial = await FinancialStatements.findByPk(freightBody.financial_statements_id)
+
+    if (!financial) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
+      return result
+    }
+
     await Freight.create(freightBody);
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freight }      
+    result = { httpStatus: httpStatus.OK, status: "First check order successful!" }      
     return result
   },
 
@@ -32,6 +43,8 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
+        "first_check_order",
+        "second_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",
@@ -71,6 +84,8 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
+        "first_check_order",
+        "second_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",
@@ -112,6 +127,8 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
+        "first_check_order",
+        "second_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",

@@ -21,6 +21,7 @@ class FinancialStatements extends Model {
         invoicing_all: Sequelize.DOUBLE,
         medium_fuel_all: Sequelize.DOUBLE,
         total_value: Sequelize.DOUBLE,
+        total_amount_paid: Sequelize.DOUBLE,
       },
       {
         sequelize,

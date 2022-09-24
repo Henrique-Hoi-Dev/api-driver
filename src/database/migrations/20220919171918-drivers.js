@@ -19,10 +19,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      conjunto: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       number_cnh: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -58,6 +54,10 @@ module.exports = {
       type_position: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      credit: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

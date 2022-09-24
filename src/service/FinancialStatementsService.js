@@ -4,6 +4,7 @@ import FinancialStatements from "../app/models/FinancialStatements";
 import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
 import Cart from '../app/models/Cart';
+import Freight from '../app/models/Freight';
 
 export default {
   async createFinancialStatements(req, res) {
@@ -29,6 +30,13 @@ export default {
       return result
     }
 
+    const existFileOpen = await FinancialStatements.findAll({ where: { driver_id: driver_id, status: true }})
+
+    if (existFileOpen.length > 0) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'Driver already has an open file' }      
+      return result
+    }
+
     const driver_name = driver.dataValues.name
     const { truck_models, truck_board, truck_avatar } = truck.dataValues
     const { cart_models, cart_board } = cart.dataValues
@@ -43,7 +51,8 @@ export default {
       truck_board, 
       truck_avatar,
       cart_models,
-      cart_board
+      cart_board,
+      total_value: 0
     }
 
     await FinancialStatements.create(body);
@@ -81,7 +90,12 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
+        'total_value'
       ],
+      include: {
+        model: Freight,
+        as: "freigth"
+      }
     });
 
     const currentPage = Number(page)
@@ -119,6 +133,7 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
+        'total_value'
       ],
     });
 
@@ -158,6 +173,7 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
+        'total_value'
       ],
     });
 
