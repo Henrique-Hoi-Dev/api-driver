@@ -18,6 +18,8 @@ class Driver extends Model {
         date_valid_nr35: Sequelize.DATEONLY,
         date_admission: Sequelize.DATEONLY,
         date_birthday: Sequelize.DATEONLY,
+        cart: Sequelize.STRING,
+        truck: Sequelize.STRING,
         credit: Sequelize.DOUBLE,
       },
       {

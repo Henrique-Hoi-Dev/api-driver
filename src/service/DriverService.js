@@ -56,13 +56,10 @@ export default {
       attributes: [ 
         'id',
         'name',
-        'credit'
+        'credit',
+        'cart',
+        'truck',
       ],
-      include: {
-        model: FinancialStatements,
-        as: "financialStatements",
-        attributes: [ "truck_models", "cart_models" ]
-      },
     });
 
     const currentPage = Number(page)

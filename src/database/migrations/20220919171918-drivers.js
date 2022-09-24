@@ -55,6 +55,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      cart: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      truck: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       credit: {
         type: Sequelize.DOUBLE,
         allowNull: true,
