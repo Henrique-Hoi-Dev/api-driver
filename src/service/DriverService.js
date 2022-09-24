@@ -56,11 +56,12 @@ export default {
       attributes: [ 
         'id',
         'name',
+        'credit'
       ],
       include: {
         model: FinancialStatements,
         as: "financialStatements",
-        attributes: [ "truck_models", "total_value" ]
+        attributes: [ "truck_models", "cart_models" ]
       },
     });
 
@@ -85,7 +86,6 @@ export default {
       attributes: [ 
         'id',
         'name', 
-        'conjunto', 
         'number_cnh', 
         'valid_cnh', 
         'date_valid_mopp', 
@@ -94,6 +94,7 @@ export default {
         'cpf', 
         'date_admission', 
         'date_birthday', 
+        'credit'
       ],  
     });
 
@@ -140,7 +141,6 @@ export default {
       attributes: [
         'id',
         'name', 
-        'conjunto', 
         'number_cnh', 
         'valid_cnh', 
         'date_valid_mopp', 
@@ -149,6 +149,7 @@ export default {
         'cpf', 
         'date_admission', 
         'date_birthday', 
+        'credit'
       ],
     });
 

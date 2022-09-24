@@ -44,6 +44,7 @@ export default {
     const body = { 
       driver_id, 
       truck_id,
+      cart_id,
       status: true,
       start_date, 
       driver_name, 
@@ -52,7 +53,8 @@ export default {
       truck_avatar,
       cart_models,
       cart_board,
-      total_value: 0
+      total_value: 0,
+      total_amount_paid: 0
     }
 
     await FinancialStatements.create(body);
@@ -157,6 +159,30 @@ export default {
         'total_value',
         'total_amount_paid'
       ],
+      include: {
+        model: Freight,
+        as: "freigth",
+        attributes: [
+          "id",
+          "financial_statements_id",
+          "start_city",
+          "final_city",
+          "location_of_the_truck",
+          "contractor",
+          "start_km",
+          "status_check_order",
+          "preview_tonne",
+          "value_tonne",
+          "preview_value_diesel",
+          "final_km",
+          "final_total_tonne",
+          "toll_value",
+          "discharge",
+          "img_proof_cte",
+          "img_proof_ticket",
+          "img_proof_freight_letter",
+        ]
+      }
     });
 
     if (!financialStatement) {
@@ -172,35 +198,25 @@ export default {
     let result = {}
 
     let financialStatements = req
+
     let financialStatementId = res.id
     
     const financialStatement = await FinancialStatements.findByPk(financialStatementId);
 
-    await financialStatement.update(financialStatements);
+    if (!financialStatement) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
+      return result
+    }
 
-    const userResult = await FinancialStatements.findByPk(financialStatementId, {
-      attributes: [
-        'id', 
-        'driver_id',
-        'truck_id',
-        'start_km',
-        'final_km',
-        'start_date',
-        'final_date',
-        'driver_name',
-        'truck_models',
-        'truck_avatar',
-        'truck_board',
-        'cart_models',
-        'cart_board',
-        'invoicing_all',
-        'medium_fuel_all',
-        'total_value',
-        'total_amount_paid'
-      ],
-    });
+    const resultUpdate = await financialStatement.update(financialStatements);
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: userResult }      
+    const creditUser = resultUpdate.total_value - resultUpdate.total_amount_paid
+
+    const driver = await Driver.findByPk(resultUpdate.driver_id);
+
+    await driver.update({ credit: creditUser });
+
+    result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
   },
   
