@@ -94,7 +94,27 @@ export default {
       ],
       include: {
         model: Freight,
-        as: "freigth"
+        as: "freigth",
+        attributes: [
+          "id",
+          "financial_statements_id",
+          "start_city",
+          "final_city",
+          "location_of_the_truck",
+          "contractor",
+          "start_km",
+          "status_check_order",
+          "preview_tonne",
+          "value_tonne",
+          "preview_value_diesel",
+          "final_km",
+          "final_total_tonne",
+          "toll_value",
+          "discharge",
+          "img_proof_cte",
+          "img_proof_ticket",
+          "img_proof_freight_letter",
+        ]
       }
     });
 

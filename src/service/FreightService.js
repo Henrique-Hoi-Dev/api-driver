@@ -8,8 +8,6 @@ export default {
     let result = {}
     let freightBody = req;
 
-    freightBody.first_check_order = true
-
     const financial = await FinancialStatements.findByPk(freightBody.financial_statements_id)
 
     if (!financial) {
@@ -43,8 +41,7 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
-        "first_check_order",
-        "second_check_order",
+        "status_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",
@@ -84,8 +81,7 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
-        "first_check_order",
-        "second_check_order",
+        "status_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",
@@ -127,8 +123,7 @@ export default {
         "location_of_the_truck",
         "contractor",
         "start_km",
-        "first_check_order",
-        "second_check_order",
+        "status_check_order",
         "preview_tonne",
         "value_tonne",
         "preview_value_diesel",

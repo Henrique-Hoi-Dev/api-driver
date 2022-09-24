@@ -46,15 +46,12 @@ module.exports = {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
-      first_check_order: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
+      status_check_order: {
+        type: Sequelize.ENUM,
+        values: ['approval_process', 'approved', 'denied', 'finished'],
+        defaultValue: 'approval_process',
       },
       // level two
-      second_check_order: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-      },
       final_km: {
         type: Sequelize.DOUBLE,
         allowNull: true,
