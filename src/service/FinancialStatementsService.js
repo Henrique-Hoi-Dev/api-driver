@@ -90,7 +90,8 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
-        'total_value'
+        'total_value',
+        'total_amount_paid'
       ],
       include: {
         model: Freight,
@@ -153,7 +154,8 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
-        'total_value'
+        'total_value',
+        'total_amount_paid'
       ],
     });
 
@@ -193,7 +195,8 @@ export default {
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
-        'total_value'
+        'total_value',
+        'total_amount_paid'
       ],
     });
 
