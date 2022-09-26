@@ -79,7 +79,7 @@ class FinancialStatementsController {
 
   async getDataDriver(req, res) {
     try {
-      let response = await FinancialStatementsService.getDataDriver();
+      let response = await FinancialStatementsService.getDataDriver(req, res);
 
       if (response.httpStatus === 200) {
         return res.send(response);
