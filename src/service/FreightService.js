@@ -36,6 +36,7 @@ export default {
       attributes: [ 
         "id",
         "financial_statements_id",
+        "start_date",
         "start_city",
         "final_city",
         "location_of_the_truck",
@@ -76,6 +77,7 @@ export default {
       attributes: [ 
         "id",
         "financial_statements_id",
+        "start_date",
         "start_city",
         "final_city",
         "location_of_the_truck",
