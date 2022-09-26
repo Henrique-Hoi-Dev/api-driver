@@ -34,6 +34,10 @@ module.exports = {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
+      start_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
       preview_tonne: {
         type: Sequelize.DOUBLE,
         allowNull: true,

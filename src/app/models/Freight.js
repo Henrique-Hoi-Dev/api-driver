@@ -10,6 +10,7 @@ class Freight extends Model {
         location_of_the_truck: Sequelize.STRING,
         contractor: Sequelize.STRING,
         start_km: Sequelize.DOUBLE,
+        start_date: Sequelize.DATEONLY,
         preview_tonne: Sequelize.DOUBLE,
         value_tonne: Sequelize.DOUBLE,
         preview_value_diesel: Sequelize.DOUBLE,
