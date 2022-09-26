@@ -17,9 +17,9 @@ class DataDriver extends Model {
     return this;
   }
 
-  static associate(models) {
-    this.hasMany(models.FinancialStatements, { foreignKey: 'data_driver_id', as: 'financialStatements' });
-  }
+  // static associate(models) {
+  //   this.hasMany(models.FinancialStatements, { foreignKey: 'data_driver_id', as: 'financialStatements' });
+  // }
 }
 
 export default DataDriver;

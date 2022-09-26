@@ -8,6 +8,7 @@ import Freight from '../app/models/Freight';
 import Restock from '../app/models/Restock';
 import TravelExpenses from '../app/models/TravelExpenses';
 import DepositMoney from '../app/models/DepositMoney';
+import DataDriver from '../app/models/DataDriver';
 import FinancialStatements from '../app/models/FinancialStatements';
 
 import "dotenv/config"
@@ -35,6 +36,7 @@ const models = [
   Cart,
   Freight,
   DepositMoney,
+  DataDriver,
   FinancialStatements,
   TravelExpenses,
   Restock,

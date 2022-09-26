@@ -4,8 +4,8 @@ import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
 import Cart from '../app/models/Cart';
 import Freight from '../app/models/Freight';
-import FinancialStatements from "../app/models/FinancialStatements";
 import DataDriver from "../app/models/DataDriver";
+import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createFinancialStatements(req, res) {
@@ -59,7 +59,7 @@ export default {
     }
 
     await FinancialStatements.create(body);
-
+    
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
   },
@@ -211,7 +211,7 @@ export default {
 
     const resultUpdate = await financialStatement.update(financialStatements);
     
-    const listDriver = await DataDriver.findByPk(resultUpdate.driver_id);
+    const listDriver = await Driver.findByPk(resultUpdate.driver_id);
 
     const creditUser = resultUpdate.total_value - resultUpdate.total_amount_paid
 

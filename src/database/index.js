@@ -18,6 +18,7 @@ const models = [
   Cart,
   Freight,
   DepositMoney,
+  DataDriver,
   FinancialStatements,
   TravelExpenses,
   Restock,
