@@ -14,7 +14,8 @@ export default {
       name_user: name_user.toLowerCase(), 
       password, 
       name, 
-      type_position: "collaborator" 
+      type_position: "collaborator",
+      credit: 0
     }
 
     // doing name user verification

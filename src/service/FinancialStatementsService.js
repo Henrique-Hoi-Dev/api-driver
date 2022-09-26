@@ -211,13 +211,13 @@ export default {
 
     const resultUpdate = await financialStatement.update(financialStatements);
     
-    const listDriver = await Driver.findByPk(resultUpdate.driver_id);
+    const driverFinancial = await Driver.findByPk(resultUpdate.driver_id);
 
     const creditUser = resultUpdate.total_value - resultUpdate.total_amount_paid
 
-    const { driver_name, truck_models, cart_models } = resultUpdate
+    const { truck_models, cart_models } = resultUpdate
 
-    await listDriver.update({ driver_name, credit: creditUser, truck_models, cart_models });
+    await driverFinancial.update({ credit: creditUser, truck: truck_models, cart: cart_models });
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
