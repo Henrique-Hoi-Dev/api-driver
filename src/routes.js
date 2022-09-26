@@ -50,6 +50,8 @@ routes.post('/financialStatement', FinancialStatementsController.createFinancial
       .get('/financialStatements', FinancialStatementsController.getAllFinancialStatements)
       .delete('/financialStatement/:id', FinancialStatementsController.deleteFinancialStatements);
 
+routes.get('/data/driver', FinancialStatementsController.getDataDriver);
+
 // freight
 routes.post('/freight', FreightController.createFreight)
       .put('/freight/:id', FreightController.updateFreight)

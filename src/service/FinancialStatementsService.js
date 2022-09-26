@@ -1,10 +1,11 @@
 import httpStatus from 'http-status-codes';
 
-import FinancialStatements from "../app/models/FinancialStatements";
 import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
 import Cart from '../app/models/Cart';
 import Freight from '../app/models/Freight';
+import FinancialStatements from "../app/models/FinancialStatements";
+import DataDriver from "../app/models/DataDriver";
 
 export default {
   async createFinancialStatements(req, res) {
@@ -209,14 +210,14 @@ export default {
     }
 
     const resultUpdate = await financialStatement.update(financialStatements);
+    
+    const listDriver = await DataDriver.findByPk(resultUpdate.driver_id);
 
     const creditUser = resultUpdate.total_value - resultUpdate.total_amount_paid
-    const truckUser = resultUpdate.truck_models
-    const cartUser = resultUpdate.cart_models
 
-    const driver = await Driver.findByPk(resultUpdate.driver_id);
+    const { driver_name, truck_models, cart_models } = resultUpdate
 
-    await driver.update({ credit: creditUser, cart: cartUser, truck: truckUser });
+    await listDriver.update({ driver_name, credit: creditUser, truck_models, cart_models });
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
     return result
@@ -239,6 +240,41 @@ export default {
     }
 
     result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted Financial Statements ' }}      
+    return result
+  },
+
+  async getDataDriver(req, res) {
+    let result = {}
+
+    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
+    const total = (await DataDriver.findAll()).length;
+
+    const totalPages = Math.ceil(total / limit);
+
+    const dataDrivers = await DataDriver.findAll({
+      order: [[ sort_field, sort_order ]],
+      limit: limit,
+      offset: (page - 1) ? (page - 1) * limit : 0,
+      attributes: [ 
+        'id', 
+        'credit',
+        'driver_name',
+        'truck_models',
+        'cart_models',
+      ],
+    });
+
+    const currentPage = Number(page)
+
+    result = { 
+      httpStatus: httpStatus.OK, 
+      status: "successful", 
+      total, 
+      totalPages, 
+      currentPage, 
+      dataResult: dataDrivers 
+    }      
+    
     return result
   }
 }

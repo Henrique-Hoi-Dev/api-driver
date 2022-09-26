@@ -76,6 +76,21 @@ class FinancialStatementsController {
       return res.status(200).json({ mgs: error.message})
     }
   }
+
+  async getDataDriver(req, res) {
+    try {
+      let response = await FinancialStatementsService.getDataDriver();
+
+      if (response.httpStatus === 200) {
+        return res.send(response);
+      } else {
+        return res.status(response.httpStatus).json(response)
+      }
+
+    } catch (error) {
+      return res.status(200).json({ mgs: error.message})
+    }
+  }
 }
 
 export default new FinancialStatementsController();
