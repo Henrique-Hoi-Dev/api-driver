@@ -60,7 +60,12 @@ export default {
         "img_proof_cte",
         "img_proof_ticket",
         "img_proof_freight_letter",
-      ], 
+      ],
+      include: {
+        model: FinancialStatements,
+        as: 'financialStatements',
+        attributes: [ 'driver_name' ]
+      }
     });
 
     const currentPage = Number(page)
