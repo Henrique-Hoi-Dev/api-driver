@@ -10,6 +10,7 @@ import TravelExpensesController from './app/controller/TravelExpensesController'
 import RestockController from './app/controller/RestockController';
 import FinancialStatementsController from './app/controller/FinancialStatementsController';
 import CartController from './app/controller/CartController';
+import NotificationController from './app/controller/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -58,6 +59,13 @@ routes.post('/freight', FreightController.createFreight)
       .get('/freight/:id', FreightController.getIdFreight)
       .get('/freights', FreightController.getAllFreight)
       .delete('/freight/:id', FreightController.deleteFreight)
+
+// notification
+routes.get('/notifications', NotificationController.getAllNotification);
+routes.get('/notificationss', NotificationController.getAll);
+routes.put('/notification/:id', NotificationController.updateNotification);
+routes.put('/notifications/:id', NotificationController.update);
+
 
 // deposit money
 routes.post('/deposit', DepositMoneyController.createDepositMoney)

@@ -9,6 +9,7 @@ import Restock from '../app/models/Restock';
 import TravelExpenses from '../app/models/TravelExpenses';
 import DepositMoney from '../app/models/DepositMoney';
 import DataDriver from '../app/models/DataDriver';
+import Notification from '../app/models/Notification';
 import FinancialStatements from '../app/models/FinancialStatements';
 
 import "dotenv/config"
@@ -37,6 +38,7 @@ const models = [
   Freight,
   DepositMoney,
   DataDriver,
+  Notification,
   FinancialStatements,
   TravelExpenses,
   Restock,

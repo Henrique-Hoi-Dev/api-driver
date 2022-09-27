@@ -1,6 +1,8 @@
 import httpStatus from 'http-status-codes';
 
 import Freight from "../app/models/Freight";
+// import Notification from "../app/schemas/Notification";
+import Notification from "../app/models/Notification";
 import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
@@ -14,8 +16,13 @@ export default {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
       return result
     }
-
+    
     await Freight.create(freightBody);
+
+    await Notification.create({
+      content: `${financial.driver_name}, Requisitando Um Check Frete!`,
+      driver_id: financial.driver_id,
+    })
 
     result = { httpStatus: httpStatus.OK, status: "First check order successful!" }      
     return result
