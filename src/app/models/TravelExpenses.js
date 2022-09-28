@@ -5,6 +5,7 @@ class TravelExpenses extends Model {
     super.init(
       {
         financial_statements_id: Sequelize.INTEGER,
+        freight_id: Sequelize.INTEGER,
         type_establishment: Sequelize.STRING,
         name_establishment: Sequelize.STRING,
         expense_description: Sequelize.STRING,

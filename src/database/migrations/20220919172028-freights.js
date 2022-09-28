@@ -34,8 +34,8 @@ module.exports = {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
-      start_date: {
-        type: Sequelize.DATEONLY,
+      travel_km: {
+        type: Sequelize.DOUBLE,
         allowNull: true,
       },
       preview_tonne: {

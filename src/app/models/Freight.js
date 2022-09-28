@@ -10,10 +10,10 @@ class Freight extends Model {
         location_of_the_truck: Sequelize.STRING,
         contractor: Sequelize.STRING,
         start_km: Sequelize.DOUBLE,
-        start_date: Sequelize.DATEONLY,
+        travel_km: Sequelize.DOUBLE,
         preview_tonne: Sequelize.DOUBLE,
-        value_tonne: Sequelize.DOUBLE,
         preview_value_diesel: Sequelize.DOUBLE,
+        value_tonne: Sequelize.DOUBLE,
         status_check_order: Sequelize.ENUM(
           { 
             values: ['approval_process', 'approved', 'denied', 'finished']

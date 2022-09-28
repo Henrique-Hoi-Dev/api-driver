@@ -38,6 +38,20 @@ export default {
       return result
     }
 
+    const truckOnSheet = await FinancialStatements.findAll({ where: { truck_id: truck_id, status: true }})
+
+    if (truckOnSheet.length > 0) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'Truck already has an open file' }      
+      return result
+    }
+
+    const cartOnSheet = await FinancialStatements.findAll({ where: { cart_id: cart_id, status: true }})
+
+    if (cartOnSheet.length > 0) {
+      result = { httpStatus: httpStatus.CONFLICT, msg: 'Cart already has an open file' }      
+      return result
+    }
+
     const driver_name = driver.dataValues.name
     const { truck_models, truck_board, truck_avatar } = truck.dataValues
     const { cart_models, cart_board } = cart.dataValues
@@ -213,7 +227,7 @@ export default {
     
     const driverFinancial = await Driver.findByPk(resultUpdate.driver_id);
 
-    const creditUser = resultUpdate.total_value - resultUpdate.total_amount_paid
+    const creditUser = 0
 
     const { truck_models, cart_models } = resultUpdate
 

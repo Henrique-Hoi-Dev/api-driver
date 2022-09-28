@@ -5,6 +5,7 @@ class DepositMoney extends Model {
     super.init(
       {
         financial_statements_id: Sequelize.INTEGER,
+        freight_id: Sequelize.INTEGER,
         type_transaction: Sequelize.STRING,
         local: Sequelize.STRING,
         type_bank: Sequelize.STRING,

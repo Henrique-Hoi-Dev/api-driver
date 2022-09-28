@@ -13,7 +13,11 @@ module.exports = {
       },
       driver_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       read: {
         type: Sequelize.BOOLEAN,

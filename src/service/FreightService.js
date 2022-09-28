@@ -20,7 +20,7 @@ export default {
     await Freight.create(freightBody);
 
     await Notification.create({
-      content: `${financial.driver_name}, Requisitando Um Check Frete!`,
+      content: `${financial.driver_name}, Requisitando Um Novo Check Frete!`,
       driver_id: financial.driver_id,
     })
 
@@ -43,7 +43,6 @@ export default {
       attributes: [ 
         "id",
         "financial_statements_id",
-        "start_date",
         "start_city",
         "final_city",
         "location_of_the_truck",
@@ -89,7 +88,6 @@ export default {
       attributes: [ 
         "id",
         "financial_statements_id",
-        "start_date",
         "start_city",
         "final_city",
         "location_of_the_truck",
@@ -108,6 +106,22 @@ export default {
         "img_proof_freight_letter",
       ],  
     });
+
+    
+    //validar valor liquido do frete
+    // precisa do km total que sera feito na viagem
+    // e multiplicar pelo valor do disel
+    // pegar api do gle para calcular as kms de cidades
+
+    const valueGross = freightBody.preview_tonne * freightBody.value_tonne
+
+    const valueDiesel = freightBody.preview_value_diesel / 100
+
+    const amountSpentOnFuel = valueDiesel * freightBody.travel_km
+
+    console.log("valores", amountSpentOnFuel)
+    
+    await Freight.create(freightBody);
 
     if (!freight) {
       result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Freight not found' }}      
@@ -132,7 +146,6 @@ export default {
       attributes: [
         "id",
         "financial_statements_id",
-        "start_date",
         "start_city",
         "final_city",
         "location_of_the_truck",

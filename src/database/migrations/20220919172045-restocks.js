@@ -14,6 +14,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      freight_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'freights', key: 'id' },
+        allowNull: true,
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       name_establishment: {
         type: Sequelize.STRING,
         allowNull: true,

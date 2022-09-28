@@ -5,6 +5,7 @@ class Restock extends Model {
     super.init(
       {
         financial_statements_id: Sequelize.INTEGER,
+        freight_id: Sequelize.INTEGER,
         name_establishment: Sequelize.STRING,
         city: Sequelize.STRING,
         date: Sequelize.DATEONLY,
