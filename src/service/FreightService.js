@@ -16,7 +16,7 @@ export default {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
       return result
     }
-    
+
     await Freight.create(freightBody);
 
     await Notification.create({
@@ -40,26 +40,6 @@ export default {
       order: [[ sort_field, sort_order ]],
       limit: limit,
       offset: (page - 1) ? (page - 1) * limit : 0,
-      attributes: [ 
-        "id",
-        "financial_statements_id",
-        "start_city",
-        "final_city",
-        "location_of_the_truck",
-        "contractor",
-        "start_km",
-        "status_check_order",
-        "preview_tonne",
-        "value_tonne",
-        "preview_value_diesel",
-        "final_km",
-        "final_total_tonne",
-        "toll_value",
-        "discharge",
-        "img_proof_cte",
-        "img_proof_ticket",
-        "img_proof_freight_letter",
-      ],
       include: {
         model: FinancialStatements,
         as: 'financialStatements',
@@ -84,44 +64,21 @@ export default {
   async getIdFreight(req, res) {
     let result = {}
 
-    let freight = await Freight.findByPk(req.id, {
-      attributes: [ 
-        "id",
-        "financial_statements_id",
-        "start_city",
-        "final_city",
-        "location_of_the_truck",
-        "contractor",
-        "start_km",
-        "status_check_order",
-        "preview_tonne",
-        "value_tonne",
-        "preview_value_diesel",
-        "final_km",
-        "final_total_tonne",
-        "toll_value",
-        "discharge",
-        "img_proof_cte",
-        "img_proof_ticket",
-        "img_proof_freight_letter",
-      ],  
-    });
+    let freight = await Freight.findByPk(req.id, {});
 
-    
     //validar valor liquido do frete
     // precisa do km total que sera feito na viagem
     // e multiplicar pelo valor do disel
     // pegar api do gle para calcular as kms de cidades
 
-    const valueGross = freightBody.preview_tonne * freightBody.value_tonne
+    const valueGross = freight.preview_tonne * freight.value_tonne
 
-    const valueDiesel = freightBody.preview_value_diesel / 100
+    const valueDiesel = freight.preview_value_diesel / 100
 
-    const amountSpentOnFuel = valueDiesel * freightBody.travel_km
+    const amountSpentOnFuel = valueDiesel * freight.travel_km
 
     console.log("valores", amountSpentOnFuel)
     
-    await Freight.create(freightBody);
 
     if (!freight) {
       result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Freight not found' }}      
