@@ -2,20 +2,22 @@ import * as Yup from 'yup';
 import httpStatus from 'http-status-codes';
 
 import Driver from "../app/models/Driver";
-import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createDriver(req, res) {
     let result = {}
 
-    let { name_user, password, name } = req;
+    let { name_user, password, name, value_fix = 0, percentage = 0, daily = 0 } = req;
 
     let body = { 
       name_user: name_user.toLowerCase(), 
       password, 
       name, 
       type_position: "collaborator",
-      credit: 0
+      credit: 0,
+      value_fix,
+      percentage,
+      daily,
     }
 
     // doing name user verification
@@ -58,6 +60,9 @@ export default {
         'id',
         'name',
         'credit',
+        'value_fix',
+        'percentage',
+        'daily',
         'cart',
         'truck',
       ],
@@ -92,7 +97,10 @@ export default {
         'cpf', 
         'date_admission', 
         'date_birthday', 
-        'credit'
+        'credit',
+        'value_fix',
+        'percentage',
+        'daily',
       ],  
     });
 
@@ -147,7 +155,10 @@ export default {
         'cpf', 
         'date_admission', 
         'date_birthday', 
-        'credit'
+        'credit',
+        'value_fix',
+        'percentage',
+        'daily',
       ],
     });
 

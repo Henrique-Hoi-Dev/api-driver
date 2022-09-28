@@ -21,6 +21,9 @@ class Driver extends Model {
         cart: Sequelize.STRING,
         truck: Sequelize.STRING,
         credit: Sequelize.DOUBLE,
+        value_fix: Sequelize.DOUBLE,
+        percentage: Sequelize.DOUBLE,
+        daily: Sequelize.DOUBLE,
       },
       {
         sequelize,

@@ -67,6 +67,18 @@ module.exports = {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
+      value_fix: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      percentage: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      daily: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

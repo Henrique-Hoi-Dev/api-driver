@@ -14,7 +14,7 @@ import FinancialStatements from '../app/models/FinancialStatements';
 
 import "dotenv/config"
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize(process.env.DATABASE_URL_AWS, {
   dialect: 'postgres',
   dialectOptions: { 
     ssl: {
