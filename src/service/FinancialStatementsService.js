@@ -95,7 +95,6 @@ export default {
         'invoicing_all',
         'medium_fuel_all',
         'total_value',
-        'total_amount_paid'
       ],
       include: {
         model: Freight,
@@ -160,7 +159,6 @@ export default {
         'invoicing_all',
         'medium_fuel_all',
         'total_value',
-        'total_amount_paid'
       ],
       include: {
         model: Freight,
