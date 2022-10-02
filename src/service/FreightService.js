@@ -1,6 +1,7 @@
 import httpStatus from 'http-status-codes';
 
 import Freight from "../app/models/Freight";
+import User from "../app/models/User";
 // import Notification from "../app/schemas/Notification";
 import Notification from "../app/models/Notification";
 import FinancialStatements from "../app/models/FinancialStatements";
@@ -75,9 +76,11 @@ export default {
 
     const valueDiesel = freight.preview_value_diesel / 100
 
-    const amountSpentOnFuel = valueDiesel * freight.travel_km
+    const amountSpentOnFuel = freight.travel_km / freight.average_fuel  
 
-    console.log("valores", amountSpentOnFuel)
+    const resultValue = amountSpentOnFuel * valueDiesel
+
+    console.log("valores", resultValue)
     
 
     if (!freight) {
@@ -85,45 +88,55 @@ export default {
       return result
     }
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freight }      
+    result = { 
+      httpStatus: httpStatus.OK, 
+      status: "successful", 
+      dataResult: {
+        freight, 
+        amountSpentOnFuel: resultValue,
+        freight_fuel_price: (resultValue - valueGross)
+      }
+    }      
     return result
   },
 
   async updateFreight(req, res) {   
     let result = {}
 
-    let freights = req
-    let freightId = res.id
+    let freightReq = req
 
-    const freight = await Freight.findByPk(freightId);
+    const freight = await Freight.findByPk(res.id);
+    const typeUser = await User.findByPk(req.user_id)
 
-    await freight.update(freights);
+    if (typeUser.type_position === "master") {
+      await freight.update({
+        status_check_order: freightReq.status_check_order,
+      });
 
-    const freightResult = await Freight.findByPk(freightId, {
-      attributes: [
-        "id",
-        "financial_statements_id",
-        "start_city",
-        "final_city",
-        "location_of_the_truck",
-        "contractor",
-        "start_km",
-        "status_check_order",
-        "preview_tonne",
-        "value_tonne",
-        "preview_value_diesel",
-        "final_km",
-        "final_total_tonne",
-        "toll_value",
-        "discharge",
-        "img_proof_cte",
-        "img_proof_ticket",
-        "img_proof_freight_letter",
-      ],
-    });
+      await Notification.create({
+        content: `${typeUser.name}, Aceitou Seu Check Frete!`,
+        user_id: typeUser.id,
+      })
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freightResult }      
-    return result
+      const freightResult = await Freight.findByPk(res.id);
+
+      return result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freightResult }      
+    } else if (req.type_position) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, dataResult: { msg: 'User is not master' } }
+      return result
+    }
+
+    if (freight.dataValues.status_check_order === "approved") {
+      await freight.update(freightReq);
+
+      const freightResult = await Freight.findByPk(freightId);
+
+      result = { httpStatus: httpStatus.OK, status: "successful", dataResult: freightResult }
+      return result   
+    } else {
+      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Shipping was not approved' }}
+      return result   
+    }
   },
   
   async deleteFreight(req, res) {

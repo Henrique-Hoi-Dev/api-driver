@@ -59,6 +59,7 @@ export default {
       attributes: [ 
         'id',
         'name',
+        "name_user",
         'credit',
         'value_fix',
         'percentage',
@@ -146,7 +147,8 @@ export default {
     const driverResult = await Driver.findByPk(driverId, {
       attributes: [
         'id',
-        'name', 
+        'name',
+        "name_user",
         'number_cnh', 
         'valid_cnh', 
         'date_valid_mopp', 

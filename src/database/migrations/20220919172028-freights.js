@@ -38,6 +38,10 @@ module.exports = {
         type: Sequelize.DOUBLE,
         allowNull: true,
       },
+      average_fuel: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
       preview_tonne: {
         type: Sequelize.DOUBLE,
         allowNull: true,

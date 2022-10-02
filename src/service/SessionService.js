@@ -4,6 +4,7 @@ import httpStatus from 'http-status-codes';
 
 import User from '../app/models/User';
 import authConfig from '../config/auth';
+import authDriverConfig from '../config/authDriver';
 import Driver from '../app/models/Driver';
 
 export default {
@@ -84,8 +85,8 @@ export default {
     const { id, cpf, date_admission, type_position } = driver;
 
     const drivers = { id, name_user, cpf, date_admission, type_position },
-      token = jwt.sign({ id }, authConfig.secret, {
-      expiresIn: authConfig.expiresIn,
+      token = jwt.sign({ id }, authDriverConfig.secret, {
+      expiresIn: authDriverConfig.expiresIn,
     });
 
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: {drivers, token} }      

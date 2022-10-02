@@ -13,8 +13,10 @@ import CartController from './app/controller/CartController';
 import NotificationController from './app/controller/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
+import authDriverMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
+
 
 // cadastro
 routes.post('/user/register', UserController.createUser);
@@ -31,6 +33,9 @@ routes.put('/user/:id', UserController.updateUser)
       .get('/users', UserController.getAllUser)
       .delete('/user/:id', UserController.deleteUser);
 
+// autenticação driver
+
+// routes.use(authDriverMiddleware);
 // users driver
 routes.put('/driver/:id', DriverController.updateDriver)
       .get('/driver/:id', DriverController.getIdDriver)
@@ -94,5 +99,6 @@ routes.post('/cart', CartController.createCart)
       .get('/cart/:id', CartController.getIdCart)
       .get('/carts', CartController.getAllCart)
       .delete('/cart/:id', CartController.deleteCart);
+
 
 export default routes;
