@@ -4,7 +4,6 @@ import Driver from '../app/models/Driver';
 import Truck from '../app/models/Truck';
 import Cart from '../app/models/Cart';
 import Freight from '../app/models/Freight';
-import DataDriver from "../app/models/DataDriver";
 import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
@@ -258,39 +257,4 @@ export default {
     result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted Financial Statements ' }}      
     return result
   },
-
-  async getDataDriver(req, res) {
-    let result = {}
-
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
-    const total = (await DataDriver.findAll()).length;
-
-    const totalPages = Math.ceil(total / limit);
-
-    const dataDrivers = await DataDriver.findAll({
-      order: [[ sort_field, sort_order ]],
-      limit: limit,
-      offset: (page - 1) ? (page - 1) * limit : 0,
-      attributes: [ 
-        'id', 
-        'credit',
-        'driver_name',
-        'truck_models',
-        'cart_models',
-      ],
-    });
-
-    const currentPage = Number(page)
-
-    result = { 
-      httpStatus: httpStatus.OK, 
-      status: "successful", 
-      total, 
-      totalPages, 
-      currentPage, 
-      dataResult: dataDrivers 
-    }      
-    
-    return result
-  }
 }

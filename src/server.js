@@ -1,7 +1,7 @@
 import app from './app';
 import "dotenv/config"
 
-const PORT = process.env.PORT || 3333
+const PORT = process.env.PORT || 3002
 
 app.listen(PORT);
-console.log("server running!!!", 3333)
+console.log("server running!!!", 3002)

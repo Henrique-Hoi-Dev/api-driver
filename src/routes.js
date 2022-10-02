@@ -1,15 +1,12 @@
 import { Router } from 'express';
 
 import SessionController from './app/controller/SessionController';
-import UserController from './app/controller/UserController';
 import DriverController from './app/controller/DriverController';
-import TruckController from './app/controller/TruckController';
 import FreightController from './app/controller/FreightController';
 import DepositMoneyController from './app/controller/DepositMoneyController';
 import TravelExpensesController from './app/controller/TravelExpensesController';
 import RestockController from './app/controller/RestockController';
 import FinancialStatementsController from './app/controller/FinancialStatementsController';
-import CartController from './app/controller/CartController';
 import NotificationController from './app/controller/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
@@ -17,19 +14,11 @@ import authMiddleware from './app/middlewares/auth';
 const routes = new Router();
 
 // cadastro
-routes.post('/user/register', UserController.createUser);
-routes.post('/user/authenticate', SessionController.sessionUser);
 routes.post('/driver/register', DriverController.createDriver)
 routes.post('/driver/authenticate', SessionController.sessioDriver);
 
 // autenticação
 routes.use(authMiddleware);
-
-// users
-routes.put('/user/:id', UserController.updateUser)
-      .get('/user/:id', UserController.getIdUser)
-      .get('/users', UserController.getAllUser)
-      .delete('/user/:id', UserController.deleteUser);
 
 // users driver
 routes.put('/driver/:id', DriverController.updateDriver)
@@ -37,21 +26,12 @@ routes.put('/driver/:id', DriverController.updateDriver)
       .get('/drivers', DriverController.getAllDriver)
       .delete('/driver/:id', DriverController.deleteDriver);
 
-// trucks
-routes.post('/truck', TruckController.createTruck)
-      .put('/truck/:id', TruckController.updateTruck)
-      .get('/truck/:id', TruckController.getIdTruck)
-      .get('/trucks', TruckController.getAllTruck)
-      .delete('/truck/:id', TruckController.deleteTruck);
-
 // financial statements
 routes.post('/financialStatement', FinancialStatementsController.createFinancialStatements)
       .put('/financialStatement/:id', FinancialStatementsController.updateFinancialStatements)
       .get('/financialStatement/:id', FinancialStatementsController.getIdFinancialStatements)
       .get('/financialStatements', FinancialStatementsController.getAllFinancialStatements)
       .delete('/financialStatement/:id', FinancialStatementsController.deleteFinancialStatements);
-
-routes.get('/data/driver', FinancialStatementsController.getDataDriver);
 
 // freight
 routes.post('/freight', FreightController.createFreight)
@@ -87,12 +67,5 @@ routes.post('/restock', RestockController.createRestock)
       .get('/restock/:id', RestockController.getIdRestock)
       .get('/restocks', RestockController.getAllRestock)
       .delete('/restock/:id', RestockController.deleteRestock);
-
-// cart
-routes.post('/cart', CartController.createCart)
-      .put('/cart/:id', CartController.updateCart)
-      .get('/cart/:id', CartController.getIdCart)
-      .get('/carts', CartController.getAllCart)
-      .delete('/cart/:id', CartController.deleteCart);
 
 export default routes;
