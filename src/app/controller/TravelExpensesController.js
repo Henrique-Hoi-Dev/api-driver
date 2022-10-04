@@ -9,7 +9,7 @@ class TravelExpensesController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
             
     } catch (error) {
@@ -24,7 +24,7 @@ class TravelExpensesController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
+        return res.status(response.httpStatus).json(response)
       }
 
     } catch (error) {

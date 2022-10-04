@@ -2,12 +2,14 @@ import httpStatus from 'http-status-codes';
 
 import TravelExpenses from "../app/models/TravelExpenses";
 import FinancialStatements from "../app/models/FinancialStatements";
+import Freight from '../app/models/Freight';
 
 export default {
   async createTravelExpenses(req, res) {
     let result = {}
     let { 
-      financial_statements_id, 
+      financial_statements_id,
+      freight_id,
       type_establishment, 
       name_establishment,
       expense_description,
@@ -16,15 +18,22 @@ export default {
       proof_img,
      } = req;
 
-    const statements = await FinancialStatements.findByPk(financial_statements_id)
-
-    if (!statements) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial statements not found' }      
-      return result
-    }
+     const financial = await FinancialStatements.findByPk(financial_statements_id)
+     const freight = await Freight.findByPk(freight_id)
+ 
+     if (!financial) {
+       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial statements not found' }      
+       return result
+     }
+ 
+     if (!freight) {
+       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' }      
+       return result
+     }
 
     let travelExpensesBody = {
-      financial_statements_id, 
+      financial_statements_id,
+      freight_id,
       type_establishment, 
       name_establishment,
       expense_description,
@@ -35,7 +44,7 @@ export default {
 
     await TravelExpenses.create(travelExpensesBody);
 
-    result = { httpStatus: httpStatus.OK, status: "successful" }      
+    result = { httpStatus: httpStatus.CREATED, status: "successful" }      
     return result
   },
 

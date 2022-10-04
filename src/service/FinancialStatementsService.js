@@ -7,76 +7,6 @@ import Freight from '../app/models/Freight';
 import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
-  async createFinancialStatements(req, res) {
-    let result = {}
-    let { driver_id, truck_id, cart_id, start_date } = req;
-
-    const driver = await Driver.findByPk(driver_id)
-    const truck = await Truck.findByPk(truck_id)
-    const cart = await Cart.findByPk(cart_id)
-
-    if (!driver) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Driver not found' }      
-      return result
-    }
-
-    if (!truck) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Truck not found' }      
-      return result
-    }
-
-    if (!cart) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Cart not found' }      
-      return result
-    }
-
-    const existFileOpen = await FinancialStatements.findAll({ where: { driver_id: driver_id, status: true }})
-
-    if (existFileOpen.length > 0) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'Driver already has an open file' }      
-      return result
-    }
-
-    const truckOnSheet = await FinancialStatements.findAll({ where: { truck_id: truck_id, status: true }})
-
-    if (truckOnSheet.length > 0) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'Truck already has an open file' }      
-      return result
-    }
-
-    const cartOnSheet = await FinancialStatements.findAll({ where: { cart_id: cart_id, status: true }})
-
-    if (cartOnSheet.length > 0) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'Cart already has an open file' }      
-      return result
-    }
-
-    const driver_name = driver.dataValues.name
-    const { truck_models, truck_board, truck_avatar } = truck.dataValues
-    const { cart_models, cart_board } = cart.dataValues
-
-    const body = { 
-      driver_id, 
-      truck_id,
-      cart_id,
-      status: true,
-      start_date, 
-      driver_name, 
-      truck_models, 
-      truck_board, 
-      truck_avatar,
-      cart_models,
-      cart_board,
-      total_value: 0,
-      total_amount_paid: 0
-    }
-
-    await FinancialStatements.create(body);
-    
-    result = { httpStatus: httpStatus.OK, status: "successful" }      
-    return result
-  },
-
   async getAllFinancialStatements(req, res) {
     let result = {}
 
@@ -235,26 +165,6 @@ export default {
     await driverFinancial.update({ credit: creditUser, truck: truck_models, cart: cart_models });
 
     result = { httpStatus: httpStatus.OK, status: "successful" }      
-    return result
-  },
-  
-  async deleteFinancialStatements(req, res) {
-    let result = {}
-    
-    const id  = req.id;
-
-    const financialStatement = await FinancialStatements.destroy({
-      where: {
-        id: id,
-      },
-    });
-
-    if (!financialStatement) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Financial Statements not found' }}      
-      return result
-    }
-
-    result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted Financial Statements ' }}      
     return result
   },
 }

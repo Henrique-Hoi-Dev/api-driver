@@ -1,13 +1,16 @@
 import httpStatus from 'http-status-codes';
 
 import Restock from "../app/models/Restock";
+import Freight from "../app/models/Freight";
 import FinancialStatements from "../app/models/FinancialStatements";
 
 export default {
   async createRestock(req, res) {
     let result = {}
+
     let { 
-      financial_statements_id, 
+      financial_statements_id,
+      freight_id,
       name_establishment, 
       city, 
       date, 
@@ -16,17 +19,24 @@ export default {
       total_nota_value 
     } = req;
 
-    const statements = await FinancialStatements.findByPk(financial_statements_id)
+    const financial = await FinancialStatements.findByPk(financial_statements_id)
+    const freight = await Freight.findByPk(freight_id)
 
-    if (!statements) {
+    if (!financial) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial statements not found' }      
+      return result
+    }
+
+    if (!freight) {
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' }      
       return result
     }
 
     let total_value_fuel = value_fuel * liters_fuel
 
     let restockBody = { 
-      financial_statements_id, 
+      financial_statements_id,
+      freight_id,
       name_establishment, 
       value_fuel, 
       liters_fuel, 
@@ -38,7 +48,7 @@ export default {
 
     await Restock.create(restockBody);
 
-    result = { httpStatus: httpStatus.OK, status: "successful" }      
+    result = { httpStatus: httpStatus.CREATED, status: "successful" }      
     return result
   },
 
@@ -57,6 +67,7 @@ export default {
       attributes: [ 
         'id',
         'name_establishment', 
+        'freight_id',
         'city', 
         'date', 
         'value_fuel', 
@@ -86,7 +97,8 @@ export default {
     let restock = await Restock.findByPk(req.id, {
       attributes: [ 
         'id',
-        'name_establishment', 
+        'name_establishment',
+        'freight_id',
         'city', 
         'date', 
         'value_fuel', 
@@ -118,7 +130,8 @@ export default {
     const restockResult = await Restock.findByPk(restockId, {
       attributes: [
         'id',
-        'name_establishment', 
+        'name_establishment',
+        'freight_id',
         'city', 
         'date', 
         'value', 
