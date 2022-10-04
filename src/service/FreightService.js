@@ -114,7 +114,7 @@ export default {
           value_tonne: freight.value_tonne,
           status_check_order: freight.status_check_order,
           amountSpentOnFuel: resultValue,
-          freight_fuel_price: (resultValue - valueGross),
+          freight_fuel_price: (discounted_fuel),
         },
         // check apoapproved
         second_check: {
