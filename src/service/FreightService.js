@@ -2,7 +2,6 @@ import httpStatus from 'http-status-codes';
 
 import Freight from "../app/models/Freight";
 import User from "../app/models/User";
-// import Notification from "../app/schemas/Notification";
 import Notification from "../app/models/Notification";
 import FinancialStatements from "../app/models/FinancialStatements";
 import Restock from '../app/models/Restock';
@@ -85,16 +84,19 @@ export default {
       result = {httpStatus: httpStatus.BAD_REQUEST, dataResult: { msg: 'Freight not found' }}      
       return result
     }
+    const value_tonne = freight.value_tonne / 100
+    // predicted fuel value
+    const preview_valueDiesel = freight.preview_value_diesel / 100
+    // predicted gross value
+    const preview_valueGross = freight.preview_tonne * value_tonne
+    // fuel consumption forecast
+    const amountSpentOnFuel = freight.travel_km / freight.preview_average_fuel  
 
-    const valueGross = freight.preview_tonne * freight.value_tonne
+    const resultValue = amountSpentOnFuel * preview_valueDiesel
 
-    const valueDiesel = freight.preview_value_diesel / 100
+    const discounted_fuel = resultValue - preview_valueGross
 
-    const amountSpentOnFuel = freight.travel_km / freight.average_fuel  
-
-    const resultValue = amountSpentOnFuel * valueDiesel
-
-    console.log("valores", resultValue)
+    console.log("valores", discounted_fuel)
     
     result = { 
       httpStatus: httpStatus.OK, 
