@@ -75,28 +75,43 @@ export default {
       ]
     });
 
-    //validar valor liquido do frete
-    // precisa do km total que sera feito na viagem
-    // e multiplicar pelo valor do disel
-    // pegar api do gle para calcular as kms de cidades
-
     if (!freight) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, dataResult: { msg: 'Freight not found' }}      
+      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
       return result
     }
+    // ton value and predicted fuel value 
     const value_tonne = freight.value_tonne / 100
-    // predicted fuel value
     const preview_valueDiesel = freight.preview_value_diesel / 100
+    const preview_tonne = freight.preview_tonne * 100
     // predicted gross value
-    const preview_valueGross = freight.preview_tonne * value_tonne
+    const preview_valueGross = preview_tonne * value_tonne
     // fuel consumption forecast
-    const amountSpentOnFuel = freight.travel_km / freight.preview_average_fuel  
+    const amountSpentOnFuel = preview_valueDiesel / freight.preview_average_fuel
+    const resultValue = Math.round(freight.travel_km/1000) * Math.round(amountSpentOnFuel)
 
-    const resultValue = amountSpentOnFuel * preview_valueDiesel
+    const discounted_fuel = preview_valueGross - Math.round(resultValue)*100
 
-    const discounted_fuel = resultValue - preview_valueGross
-
-    console.log("valores", discounted_fuel)
+    // total value supplied
+    const quantityRestock = freight.restock.map(function (res) {
+      return parseInt(res.dataValues.total_value_fuel)
+    })
+    const totalQuantityRestock = quantityRestock.reduce(function(previousValue, currentValue) {
+      return Number(previousValue) + Number(currentValue);
+    }, 0 && quantityRestock)
+    // total amount expenses
+    const quantityExpenses = freight.travel_expense.map(function (res) {
+      return parseInt(res.dataValues.value)
+    })
+    const totalQuantityExpenses = quantityExpenses.reduce(function(previousValue, currentValue) {
+      return Number(previousValue) + Number(currentValue);
+    }, 0 && quantityRestock)
+    // total amount deposit money
+    const quantityDepositMoney = freight.deposit_money.map(function (res) {
+      return parseInt(res.dataValues.value)
+    })
+    const totalQuantityDepositMoney = quantityDepositMoney.reduce(function(previousValue, currentValue) {
+      return Number(previousValue) + Number(currentValue);
+    }, 0 && quantityRestock)
     
     result = { 
       httpStatus: httpStatus.OK, 
@@ -113,8 +128,11 @@ export default {
           preview_value_diesel: freight.preview_value_diesel,
           value_tonne: freight.value_tonne,
           status_check_order: freight.status_check_order,
-          amountSpentOnFuel: resultValue,
-          freight_fuel_price: (discounted_fuel),
+          item_total: {  
+            preview_valueGross: preview_valueGross,
+            preview_fuel_expense: Math.round(resultValue)*100,
+            fuel_discount_on_shipping: discounted_fuel,
+          },
         },
         // check apoapproved
         second_check: {
@@ -125,6 +143,11 @@ export default {
           img_proof_cte: freight.img_proof_cte,
           img_proof_ticket: freight.img_proof_ticket,
           img_proof_freight_letter: freight.img_proof_freight_letter, 
+          item_total: {
+            total_value_fuel: totalQuantityRestock,
+            total_value_expenses: totalQuantityExpenses,
+            total_deposit_money: totalQuantityDepositMoney
+          } 
         },
         restock: freight.restock,
         travel_expense: freight.travel_expense,

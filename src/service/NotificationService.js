@@ -19,35 +19,18 @@ export default {
 
     const notificationsDriver = await Notifications.findAll({
       where: { driver_id: req.userId },
-      order: [["createdAt", "desc"]],
-      attributes: [ 'id', 'content', 'read' ]
+      order: [["created_at", "DESC"]],
+      attributes: [ 'id', 'content', 'read', 'created_at' ]
     })
 
     result = { httpStatus: httpStatus.OK, status: "successful", dataResult: notificationsDriver } 
     return result
   },
 
-  // async updateNotification(req, res) {   
-  //   let result = {}
-
-  //   let notificationId = res.id
-
-  //   const notification = await Notification.findByIdAndUpdate(
-  //     notificationId,
-  //     { read: true },
-  //     { new: true }
-  //   )
-
-  //   result = { httpStatus: httpStatus.OK, status: "successful", dataResult: notification }      
-  //   return result
-  // },
-
   async update(req, res) {   
     let result = {}
 
     const notificationReq = await Notifications.findByPk(res.id)
-
-    console.log("noti", notificationReq)
 
     if (!notificationReq) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Notification not found' }      
