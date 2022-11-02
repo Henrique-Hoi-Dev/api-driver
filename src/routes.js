@@ -34,7 +34,6 @@ routes.get('/driver/notifications', NotificationController.getAll);
 routes.put('/driver/notification/:id', NotificationController.updateNotification);
 routes.put('/driver/notifications/:id', NotificationController.update);
 
-
 // deposit money
 routes.post('/driver/deposit', DepositMoneyController.createDepositMoney)
       .put('/driver/deposit/:id', DepositMoneyController.updateDepositMoney)
