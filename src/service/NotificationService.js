@@ -9,7 +9,7 @@ export default {
     let result = {}
 
     const checkIsDriver = await Driver.findOne({
-      where: { id: req.userId, type_position: "collaborator" }
+      where: { id: req.userId, type_positions: "COLLABORATOR" }
     })
 
     if (!checkIsDriver) {

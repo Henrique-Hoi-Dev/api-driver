@@ -13,7 +13,7 @@ export default {
       name_user: name_user.toLowerCase(), 
       password, 
       name, 
-      type_position: "collaborator",
+      type_position,
       credit: 0,
       value_fix,
       percentage,

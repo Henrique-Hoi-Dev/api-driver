@@ -31,7 +31,7 @@ export default {
       return result
     }
 
-    if (!(driver.dataValues.type_position === "collaborator")) {
+    if (!(driver.dataValues.type_positions === "COLLABORATOR")) {
       result = { httpStatus: httpStatus.BAD_REQUEST, msg: "You do not have permission to log into this account" }
       return result
     }
@@ -41,10 +41,10 @@ export default {
       return result
     }
 
-    const { id, cpf, date_admission, type_position } = driver;
+    const { id, credit, value_fix, percentage,  type_positions, status } = driver;
 
-    const drivers = { id, name_user, cpf, date_admission, type_position },
-      token = jwt.sign({ id }, authConfig.secret, {
+    const drivers = { id, name_user, credit, value_fix, percentage, type_positions, status },
+      token = jwt.sign({ id, type_positions, name_user, status, credit, value_fix, percentage }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
     });
 
