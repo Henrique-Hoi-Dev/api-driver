@@ -1,8 +1,8 @@
 import httpStatus from 'http-status-codes';
 
-import DepositMoney from "../app/models/DepositMoney";
-import FinancialStatements from '../app/models/FinancialStatements';
-import Freight from '../app/models/Freight';
+import DepositMoney from "../models/DepositMoney";
+import FinancialStatements from '../models/FinancialStatements';
+import Freight from '../models/Freight';
 
 export default {
   async createDepositMoney(req, res) {

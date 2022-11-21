@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 import httpStatus from 'http-status-codes';
 
-import authConfig from '../config/auth';
-import Driver from '../app/models/Driver';
+import authConfig from '../../config/auth';
+import Driver from '../models/Driver';
 
 export default {
 

@@ -1,92 +1,14 @@
 import * as Yup from 'yup';
 import httpStatus from 'http-status-codes';
 
-import Driver from "../app/models/Driver";
+import Driver from "../models/Driver";
 
 export default {
-  async createDriver(req, res) {
+  async getProfileDriver(req, res) {
     let result = {}
+    let userId = req
 
-    let { name_user, password, name, value_fix = 0, percentage = 0, daily = 0 } = req;
-
-    let body = { 
-      name_user: name_user.toLowerCase(), 
-      password, 
-      name, 
-      type_position,
-      credit: 0,
-      value_fix,
-      percentage,
-      daily,
-    }
-
-    // doing name user verification
-    const driverExist = await Driver.findOne({ where: { name_user: body.name_user } });
-
-    if (driverExist) {
-      result = { httpStatus: httpStatus.CONFLICT, msg: 'This driver name user already exists.' };
-      return result;
-    }
-
-    const schema = Yup.object().shape({
-      name_user: Yup.string().required(),
-      password: Yup.string().required().min(6),
-    });
-
-    if (!(await schema.isValid(body))) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Validation failed!' };
-      return result
-    }
-
-    await Driver.create(body);
-
-    result = { httpStatus: httpStatus.CREATED, status: "successful" }      
-    return result
-  },
-
-  async getAllDriver(req, res) {
-    let result = {}
-
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
-    const total = (await Driver.findAll()).length;
-
-    const totalPages = Math.ceil(total / limit);
-
-    const drivers = await Driver.findAll({
-      order: [[ sort_field, sort_order ]],
-      limit: limit,
-      offset: (page - 1) ? (page - 1) * limit : 0,
-      attributes: [ 
-        'id',
-        'name',
-        "name_user",
-        'credit',
-        'value_fix',
-        'percentage',
-        'daily',
-        'cart',
-        'truck',
-      ],
-    });
-
-    const currentPage = Number(page)
-
-    result = { 
-      httpStatus: httpStatus.OK, 
-      status: "successful", 
-      total, 
-      totalPages, 
-      currentPage, 
-      dataResult: drivers
-    } 
-
-    return result
-  },
-
-  async getIdDriver(req, res) {
-    let result = {}
-
-    let driver = await Driver.findByPk(req.id, {
+    let driver = await Driver.findByPk(userId, {
       attributes: [ 
         'id',
         'name', 
@@ -118,7 +40,7 @@ export default {
     let result = {}
 
     let drivers = req
-    let driverId = res.id
+    let driverId = res
 
     const schema = Yup.object().shape({
         name: Yup.string(),

@@ -1,8 +1,8 @@
 import httpStatus from 'http-status-codes';
 
-import Restock from "../app/models/Restock";
-import Freight from "../app/models/Freight";
-import FinancialStatements from "../app/models/FinancialStatements";
+import Restock from "../models/Restock";
+import Freight from "../models/Freight";
+import FinancialStatements from "../models/FinancialStatements";
 
 export default {
   async createRestock(req, res) {

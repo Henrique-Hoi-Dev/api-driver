@@ -1,8 +1,8 @@
 import httpStatus from 'http-status-codes';
 
-import Driver from '../app/models/Driver';
-// import Notification from "../app/schemas/Notification";
-import Notifications from "../app/models/Notification";
+import Driver from '../models/Driver';
+// import Notification from "../schemas/Notification";
+import Notifications from "../models/Notification";
 
 export default {
   async getAll(req, res) {

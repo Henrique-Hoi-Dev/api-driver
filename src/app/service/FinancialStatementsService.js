@@ -1,10 +1,10 @@
 import httpStatus from 'http-status-codes';
 
-import Driver from '../app/models/Driver';
-import Truck from '../app/models/Truck';
-import Cart from '../app/models/Cart';
-import Freight from '../app/models/Freight';
-import FinancialStatements from "../app/models/FinancialStatements";
+import Driver from '../models/Driver';
+import Truck from '../models/Truck';
+import Cart from '../models/Cart';
+import Freight from '../models/Freight';
+import FinancialStatements from "../models/FinancialStatements";
 
 export default {
   async getAllFinancialStatements(req, res) {
