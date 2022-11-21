@@ -1,4 +1,4 @@
-import TravelExpensesService from '../../service/TravelExpensesService';
+import TravelExpensesService from '../service/TravelExpensesService';
 
 class TravelExpensesController {
 

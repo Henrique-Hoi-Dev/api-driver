@@ -1,4 +1,4 @@
-import RestockService from '../../service/RestockService';
+import RestockService from '../service/RestockService';
 
 class RestockController {
 

@@ -1,12 +1,12 @@
 import httpStatus from 'http-status-codes';
 
-import Freight from "../app/models/Freight";
-import User from "../app/models/User";
-import Notification from "../app/models/Notification";
-import FinancialStatements from "../app/models/FinancialStatements";
-import Restock from '../app/models/Restock';
-import TravelExpenses from '../app/models/TravelExpenses';
-import DepositMoney from '../app/models/DepositMoney';
+import Freight from "../models/Freight";
+import User from "../models/User";
+import Notification from "../models/Notification";
+import FinancialStatements from "../models/FinancialStatements";
+import Restock from '../models/Restock';
+import TravelExpenses from '../models/TravelExpenses';
+import DepositMoney from '../models/DepositMoney';
 
 export default {
   async createFreight(req, res) {

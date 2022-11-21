@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import SessionController from './app/controller/SessionController';
+import DriverController from './app/controller/DriverController';
 import FreightController from './app/controller/FreightController';
 import DepositMoneyController from './app/controller/DepositMoneyController';
 import TravelExpensesController from './app/controller/TravelExpensesController';
@@ -17,6 +18,9 @@ routes.post('/driver/authenticate', SessionController.sessioDriver);
 
 // autenticação
 routes.use(authMiddleware);
+
+routes.put('/update-profile', DriverController.updateDriver)
+      .get('/profile', DriverController.getProfileDriver);
 
 // financial statements
 routes.put('/driver/financialStatement/:id', FinancialStatementsController.updateFinancialStatements)

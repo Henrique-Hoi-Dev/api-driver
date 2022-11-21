@@ -1,4 +1,4 @@
-import DepositMoneyService from '../../service/DepositMoneyService';
+import DepositMoneyService from '../service/DepositMoneyService';
 
 class DepositMoneyController {
 

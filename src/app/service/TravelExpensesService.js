@@ -1,8 +1,8 @@
 import httpStatus from 'http-status-codes';
 
-import TravelExpenses from "../app/models/TravelExpenses";
-import FinancialStatements from "../app/models/FinancialStatements";
-import Freight from '../app/models/Freight';
+import TravelExpenses from "../models/TravelExpenses";
+import FinancialStatements from "../models/FinancialStatements";
+import Freight from '../models/Freight';
 
 export default {
   async createTravelExpenses(req, res) {
