@@ -5,7 +5,7 @@ module.exports = {
   host: process.env.HER_HOST,
   username: process.env.HER_USER,
   password: process.env.HER_PASS,
-  database: process.env.HER_NAME,
+  database: process.env.HER_DATABASE,
   dialectOptions: {
     ssl: {
       require: true,
@@ -26,7 +26,7 @@ module.exports = {
 //   host: process.env.DB_HOST,
 //   username: process.env.DB_USER,
 //   password: process.env.DB_PASS,
-//   database: process.env.DB_NAME,
+//   database: process.env.DB_DATABASE,
 //   define: {
 //     timestamps: true,
 //     underscored: true,
