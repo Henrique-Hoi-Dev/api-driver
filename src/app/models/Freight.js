@@ -15,9 +15,9 @@ class Freight extends Model {
         preview_tonne: Sequelize.DOUBLE,
         preview_value_diesel: Sequelize.DOUBLE,
         value_tonne: Sequelize.DOUBLE,
-        status_check: Sequelize.ENUM(
+        status: Sequelize.ENUM(
           { 
-            values: ['APPROVAL_PROCESS', 'APPROVED','DENIED', 'FINISHED']
+            values: ['APPROVAL_PROCESS', 'APPROVED', 'STARTING_TRIP', 'DENIED', 'FINISHED']
           }
         ),
         // level two

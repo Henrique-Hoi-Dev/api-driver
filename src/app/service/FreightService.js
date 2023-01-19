@@ -1,7 +1,6 @@
 import httpStatus from 'http-status-codes';
 
 import Freight from "../models/Freight";
-import User from "../models/User";
 import Notification from "../models/Notification";
 import FinancialStatements from "../models/FinancialStatements";
 import Restock from '../models/Restock';
@@ -127,7 +126,7 @@ export default {
           preview_tonne: freight.preview_tonne,
           preview_value_diesel: freight.preview_value_diesel,
           value_tonne: freight.value_tonne,
-          status_check_order: freight.status_check_order,
+          status: freight.status,
           item_total: {  
             preview_valueGross: preview_valueGross,
             preview_fuel_expense: Math.round(resultValue)*100,
@@ -178,7 +177,7 @@ export default {
       return result
     }
 
-    if (freight.dataValues.status_check_order === "approved") {
+    if (freight.dataValues.status === "approved") {
 
       const financial = await FinancialStatements.findByPk(freight.financial_statements_id)
 
