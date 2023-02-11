@@ -3,7 +3,7 @@ import FreightService from '../service/FreightService';
 class FreightController {
   async createFreight(req, res) {
     try {
-      let response = await FreightService.createFreight(req.body);
+      let response = await FreightService.createFreight(req, req.body);
 
       if (response.httpStatus === 200) {
         return res.send(response);
