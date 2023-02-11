@@ -10,8 +10,8 @@ class Notification extends Model {
         freight_id: Sequelize.INTEGER,
         read: {
           type: Boolean,
-          defaultValue: false
-        }
+          defaultValue: false,
+        },
       },
       {
         sequelize,

@@ -8,12 +8,11 @@ import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 
 export default {
-  async createFreight(req, res) {
+  async createFreight(req) {
     let result = {};
-    let freightBody = req;
 
     const financial = await FinancialStatements.findByPk(
-      freightBody.financial_statements_id
+      req.financial_statements_id
     );
 
     if (!financial) {
@@ -24,28 +23,38 @@ export default {
       return result;
     }
 
-    const freight = await Freight.create(freightBody);
+    if (financial.status === false) {
+      result = {
+        httpStatus: httpStatus.BAD_REQUEST,
+        msg: 'This form has already been finished',
+      };
+      return result;
+    }
+
+    const freight = await Freight.create(req);
 
     await Notification.create({
-      content: `${financial.driver_name}, Requisitando Um Novo Check Frete!`,
+      content: `${financial.driver_name}, Requisitou um novo check frete!`,
       user_id: financial.creator_user_id,
       freight_id: freight.id,
+      driver_id: req.userId,
     });
 
     result = {
       httpStatus: httpStatus.CREATED,
-      status: 'First check order successful!',
+      status: 'Check order successful!',
     };
     return result;
   },
 
   // bring all the shipping information, with some value calculations
-  async getIdFreight(req, res) {
+  async getIdFreight(id) {
     let result = {};
 
-    let freight = await Freight.findByPk(req.id, {
+    const freight = await Freight.findByPk(id, {
       include: [
         {
+          // bastecidas
           model: Restock,
           as: 'restock',
           attributes: [
@@ -59,6 +68,7 @@ export default {
           ],
         },
         {
+          // despesas da viagem
           model: TravelExpenses,
           as: 'travel_expense',
           attributes: [
@@ -70,6 +80,7 @@ export default {
           ],
         },
         {
+          // deposito feito na viagem
           model: DepositMoney,
           as: 'deposit_money',
           attributes: ['id', 'type_transaction', 'local', 'type_bank', 'value'],
@@ -80,7 +91,7 @@ export default {
     if (!freight) {
       result = {
         httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial not found',
+        msg: 'Freight not found',
       };
       return result;
     }
