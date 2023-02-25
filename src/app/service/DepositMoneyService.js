@@ -29,7 +29,10 @@ export default {
       return result;
     }
 
-    await DepositMoney.create(body);
+    await DepositMoney.create({
+      ...body,
+      financial_statements_id: financial.id,
+    });
 
     result = { httpStatus: httpStatus.CREATED, status: 'successful' };
     return result;
