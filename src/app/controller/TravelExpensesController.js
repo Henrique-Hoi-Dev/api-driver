@@ -3,7 +3,10 @@ import TravelExpensesService from '../service/TravelExpensesService';
 class TravelExpensesController {
   async createTravelExpenses(req, res) {
     try {
-      let response = await TravelExpensesService.createTravelExpenses(req.body);
+      let response = await TravelExpensesService.createTravelExpenses(
+        req,
+        req.body
+      );
 
       if (response.httpStatus === 200) {
         return res.send(response);

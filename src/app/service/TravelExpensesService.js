@@ -5,22 +5,14 @@ import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
 
 export default {
-  async createTravelExpenses(req, res) {
+  async createTravelExpenses(user, body) {
     let result = {};
-    let {
-      financial_statements_id,
-      freight_id,
-      type_establishment,
-      name_establishment,
-      expense_description,
-      dfe,
-      value,
-      proof_img,
-    } = req;
+    let { freight_id } = body;
 
-    const financial = await FinancialStatements.findByPk(
-      financial_statements_id
-    );
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: user.driverId, status: true },
+    });
+
     const freight = await Freight.findByPk(freight_id);
 
     if (!financial) {
@@ -36,18 +28,10 @@ export default {
       return result;
     }
 
-    let travelExpensesBody = {
-      financial_statements_id,
-      freight_id,
-      type_establishment,
-      name_establishment,
-      expense_description,
-      dfe,
-      value,
-      proof_img,
-    };
-
-    await TravelExpenses.create(travelExpensesBody);
+    await TravelExpenses.create({
+      ...body,
+      financial_statements_id: financial.id,
+    });
 
     result = { httpStatus: httpStatus.CREATED, status: 'successful' };
     return result;

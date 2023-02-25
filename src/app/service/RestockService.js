@@ -5,23 +5,15 @@ import Freight from '../models/Freight';
 import FinancialStatements from '../models/FinancialStatements';
 
 export default {
-  async createRestock(req, res) {
+  async createRestock(user, body) {
     let result = {};
 
-    let {
-      financial_statements_id,
-      freight_id,
-      name_establishment,
-      city,
-      date,
-      value_fuel,
-      liters_fuel,
-      total_nota_value,
-    } = req;
+    let { freight_id, value_fuel, liters_fuel } = body;
 
-    const financial = await FinancialStatements.findByPk(
-      financial_statements_id
-    );
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: user.driverId, status: true },
+    });
+
     const freight = await Freight.findByPk(freight_id);
 
     if (!financial) {
@@ -39,19 +31,11 @@ export default {
 
     let total_value_fuel = value_fuel * liters_fuel;
 
-    let restockBody = {
-      financial_statements_id,
-      freight_id,
-      name_establishment,
-      value_fuel,
-      liters_fuel,
-      city,
-      date,
-      total_nota_value,
+    await Restock.create({
+      ...body,
+      financial_statements_id: financial.id,
       total_value_fuel,
-    };
-
-    await Restock.create(restockBody);
+    });
 
     result = { httpStatus: httpStatus.CREATED, status: 'successful' };
     return result;

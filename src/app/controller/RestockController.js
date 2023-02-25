@@ -3,7 +3,7 @@ import RestockService from '../service/RestockService';
 class RestockController {
   async createRestock(req, res) {
     try {
-      let response = await RestockService.createRestock(req.body);
+      let response = await RestockService.createRestock(req, req.body);
 
       if (response.httpStatus === 200) {
         return res.send(response);

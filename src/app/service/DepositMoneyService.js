@@ -5,14 +5,16 @@ import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
 
 export default {
-  async createDepositMoney(req, res) {
+  async createDepositMoney(user, body) {
     let result = {};
-    let depositMoneyBody = req;
 
-    const financial = await FinancialStatements.findByPk(
-      req.financial_statements_id
-    );
-    const freight = await Freight.findByPk(req.freight_id);
+    const { freight_id } = body;
+
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: user.driverId, status: true },
+    });
+
+    const freight = await Freight.findByPk(freight_id);
 
     if (!financial) {
       result = {
@@ -27,7 +29,7 @@ export default {
       return result;
     }
 
-    await DepositMoney.create(depositMoneyBody);
+    await DepositMoney.create(body);
 
     result = { httpStatus: httpStatus.CREATED, status: 'successful' };
     return result;

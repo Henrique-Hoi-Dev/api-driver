@@ -3,7 +3,10 @@ import DepositMoneyService from '../service/DepositMoneyService';
 class DepositMoneyController {
   async createDepositMoney(req, res) {
     try {
-      let response = await DepositMoneyService.createDepositMoney(req.body);
+      let response = await DepositMoneyService.createDepositMoney(
+        req,
+        req.body
+      );
 
       if (response.httpStatus === 200) {
         return res.send(response);
