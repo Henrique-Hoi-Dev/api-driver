@@ -1,7 +1,6 @@
 import httpStatus from 'http-status-codes';
 
 import Driver from '../models/Driver';
-// import Notification from "../schemas/Notification";
 import Notifications from '../models/Notification';
 
 export default {

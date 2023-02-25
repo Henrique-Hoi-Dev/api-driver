@@ -1,7 +1,6 @@
 import TravelExpensesService from '../service/TravelExpensesService';
 
 class TravelExpensesController {
-
   async createTravelExpenses(req, res) {
     try {
       let response = await TravelExpensesService.createTravelExpenses(req.body);
@@ -9,11 +8,10 @@ class TravelExpensesController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json(response)
+        return res.status(response.httpStatus).json(response);
       }
-            
     } catch (error) {
-      return res.status(400).json({ error: error.message })
+      return res.status(400).json({ error: error.message });
     }
   }
 
@@ -24,56 +22,26 @@ class TravelExpensesController {
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json(response)
+        return res.status(response.httpStatus).json(response);
       }
-
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      return res.status(400).json({ mgs: error.message });
     }
   }
 
-  async getIdTravelExpenses(req, res) { 
+  async getIdTravelExpenses(req, res) {
     try {
-      let response = await TravelExpensesService.getIdTravelExpenses(req.params);
+      let response = await TravelExpensesService.getIdTravelExpenses(
+        req.params
+      );
 
       if (response.httpStatus === 200) {
         return res.send(response);
       } else {
-        return res.status(response.httpStatus).json(response)
+        return res.status(response.httpStatus).json(response);
       }
-
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  }
-
-  async updateTravelExpenses(req, res) {
-    try {
-      let response = await TravelExpensesService.updateTravelExpenses(req.body, req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  } 
-
-  async deleteTravelExpenses(req, res) {
-    try {
-      let response = await TravelExpensesService.deleteTravelExpenses(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(200).json({ mgs: error.message})
+      return res.status(400).json({ mgs: error.message });
     }
   }
 }

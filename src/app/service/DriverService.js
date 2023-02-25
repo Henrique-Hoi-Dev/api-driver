@@ -4,7 +4,7 @@ import httpStatus from 'http-status-codes';
 import Driver from '../models/Driver';
 
 export default {
-  async getProfileDriver(id, res) {
+  async profile(id) {
     let result = {};
 
     let driver = await Driver.findByPk(id, {
@@ -42,11 +42,8 @@ export default {
     return result;
   },
 
-  async updateDriver(req, res) {
+  async update(user, code) {
     let result = {};
-
-    let drivers = req;
-    let driverId = res;
 
     const schema = Yup.object().shape({
       name: Yup.string(),
@@ -61,7 +58,7 @@ export default {
       ),
     });
 
-    if (!(await schema.isValid(drivers))) {
+    if (!(await schema.isValid(user.body))) {
       result = {
         httpStatus: httpStatus.BAD_REQUEST,
         msg: 'Validation failed!',
@@ -69,9 +66,9 @@ export default {
       return result;
     }
 
-    const { oldPassword } = drivers;
+    const { oldPassword } = user.body;
 
-    const driver = await Driver.findByPk(driverId);
+    const driver = await Driver.findByPk(user.driverId);
 
     if (oldPassword && !(await driver.checkPassword(oldPassword))) {
       result = {
@@ -81,9 +78,9 @@ export default {
       return result;
     }
 
-    await driver.update(drivers);
+    await driver.update(user.body);
 
-    const driverResult = await Driver.findByPk(driverId, {
+    const driverResult = await Driver.findByPk(user.driverId, {
       attributes: [
         'id',
         'name',
@@ -107,33 +104,6 @@ export default {
       httpStatus: httpStatus.OK,
       status: 'successful',
       dataResult: driverResult,
-    };
-    return result;
-  },
-
-  async deleteDriver(req, res) {
-    let result = {};
-
-    const id = req.id;
-
-    const driver = await Driver.destroy({
-      where: {
-        id: id,
-      },
-    });
-
-    if (!driver) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Driver not found' },
-      };
-      return result;
-    }
-
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      responseData: { msg: 'Deleted driver' },
     };
     return result;
   },

@@ -8,12 +8,12 @@ import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 
 export default {
-  async createFreight(req, body) {
+  async createFreight(user, body) {
     let result = {};
 
-    const financial = await FinancialStatements.findByPk(
-      body.financial_statements_id
-    );
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: user.driverId, status: true },
+    });
 
     if (!financial) {
       result = {
@@ -37,7 +37,7 @@ export default {
       content: `${financial.driver_name}, Requisitou um novo check frete!`,
       user_id: financial.creator_user_id,
       freight_id: freight.id,
-      driver_id: req.driverId,
+      driver_id: user.driverId,
     });
 
     result = {
@@ -47,7 +47,6 @@ export default {
     return result;
   },
 
-  // bring all the shipping information, with some value calculations
   async getIdFreight(id) {
     let result = {};
 
