@@ -31,7 +31,10 @@ export default {
       return result;
     }
 
-    const freight = await Freight.create(body);
+    const freight = await Freight.create({
+      ...body,
+      financial_statements_id: financial.id,
+    });
 
     await Notification.create({
       content: `${financial.driver_name}, Requisitou um novo check frete!`,
