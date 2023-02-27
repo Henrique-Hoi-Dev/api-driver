@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import mongoose from 'mongoose';
 
 import Driver from '../app/models/Driver';
 import User from '../app/models/User';
@@ -14,7 +13,7 @@ import FinancialStatements from '../app/models/FinancialStatements';
 
 import databaseConfig from '../config/database.js';
 
-const models = [ 
+const models = [
   Cart,
   User,
   Truck,
@@ -30,7 +29,6 @@ const models = [
 class Database {
   constructor() {
     this.init();
-    this.mongo()
   }
 
   init() {
@@ -41,13 +39,6 @@ class Database {
       .map(
         (model) => model.associate && model.associate(this.connetion.models)
       );
-  }
-
-  mongo() {
-    this.mongoConnection = mongoose.connect(
-      'mongodb://localhost:27017/titon',
-      { useNewUrlParser: true }
-    )
   }
 }
 

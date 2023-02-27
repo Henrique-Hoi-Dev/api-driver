@@ -10,10 +10,10 @@ class FinancialStatements extends Model {
         cart_id: Sequelize.INTEGER,
         status: {
           type: Boolean,
-          defaultValue: true
+          defaultValue: true,
         },
-        start_km: Sequelize.DOUBLE,
-        final_km: Sequelize.DOUBLE,
+        start_km: Sequelize.DECIMAL,
+        final_km: Sequelize.DECIMAL,
         start_date: Sequelize.DATEONLY,
         final_date: Sequelize.DATEONLY,
         driver_name: Sequelize.STRING,
@@ -22,9 +22,9 @@ class FinancialStatements extends Model {
         truck_avatar: Sequelize.STRING,
         cart_models: Sequelize.STRING,
         cart_board: Sequelize.STRING,
-        invoicing_all: Sequelize.DOUBLE,
-        medium_fuel_all: Sequelize.DOUBLE,
-        total_value: Sequelize.DOUBLE,
+        invoicing_all: Sequelize.DECIMAL,
+        medium_fuel_all: Sequelize.DECIMAL,
+        total_value: Sequelize.DECIMAL,
       },
       {
         sequelize,
@@ -38,10 +38,22 @@ class FinancialStatements extends Model {
     this.belongsTo(models.Driver, { foreignKey: 'driver_id', as: 'driver' });
     this.belongsTo(models.Truck, { foreignKey: 'truck_id', as: 'truck' });
     this.belongsTo(models.Cart, { foreignKey: 'cart_id', as: 'cart' });
-    this.hasMany(models.Freight, { foreignKey: 'financial_statements_id', as: 'freigth' });
-    this.hasMany(models.DepositMoney, { foreignKey: 'financial_statements_id', as: 'deposit_money' });
-    this.hasMany(models.Restock, { foreignKey: 'financial_statements_id', as: 'restock' });
-    this.hasMany(models.TravelExpenses, { foreignKey: 'financial_statements_id', as: 'travel_expense' });
+    this.hasMany(models.Freight, {
+      foreignKey: 'financial_statements_id',
+      as: 'freigth',
+    });
+    this.hasMany(models.DepositMoney, {
+      foreignKey: 'financial_statements_id',
+      as: 'deposit_money',
+    });
+    this.hasMany(models.Restock, {
+      foreignKey: 'financial_statements_id',
+      as: 'restock',
+    });
+    this.hasMany(models.TravelExpenses, {
+      foreignKey: 'financial_statements_id',
+      as: 'travel_expense',
+    });
   }
 }
 

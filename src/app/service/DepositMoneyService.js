@@ -38,7 +38,7 @@ export default {
     return result;
   },
 
-  async getAllDepositMoney(req, res) {
+  async getAllDepositMoney(query) {
     let result = {};
 
     const {
@@ -46,7 +46,8 @@ export default {
       limit = 100,
       sort_order = 'ASC',
       sort_field = 'id',
-    } = req.query;
+    } = query;
+
     const total = (await DepositMoney.findAll()).length;
 
     const totalPages = Math.ceil(total / limit);
@@ -79,10 +80,10 @@ export default {
     return result;
   },
 
-  async getIdDepositMoney(req, res) {
+  async getIdDepositMoney(id) {
     let result = {};
 
-    let depositMoney = await DepositMoney.findByPk(req.id, {
+    let depositMoney = await DepositMoney.findByPk(id, {
       attributes: [
         'id',
         'type_transaction',
@@ -96,7 +97,7 @@ export default {
     if (!depositMoney) {
       result = {
         httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Deposit Money not found' },
+        msg: 'Deposit Money not found',
       };
       return result;
     }
@@ -104,7 +105,7 @@ export default {
     result = {
       httpStatus: httpStatus.OK,
       status: 'successful',
-      dataResult: depositMoney,
+      dataResult: { ...depositMoney, value: Number(depositMoney.value) },
     };
     return result;
   },

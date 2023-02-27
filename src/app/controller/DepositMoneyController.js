@@ -14,13 +14,13 @@ class DepositMoneyController {
         return res.status(response.httpStatus).json(response);
       }
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(response.httpStatus).json({ error: error.message });
     }
   }
 
   async getAllDepositMoney(req, res) {
     try {
-      let response = await DepositMoneyService.getAllDepositMoney(req, res);
+      let response = await DepositMoneyService.getAllDepositMoney(req.query);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -28,13 +28,13 @@ class DepositMoneyController {
         return res.status(response.httpStatus).json(response);
       }
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      return res.status(response.httpStatus).json({ mgs: error.message });
     }
   }
 
   async getIdDepositMoney(req, res) {
     try {
-      let response = await DepositMoneyService.getIdDepositMoney(req.params);
+      let response = await DepositMoneyService.getIdDepositMoney(req.params.id);
 
       if (response.httpStatus === 200) {
         return res.send(response);
@@ -42,7 +42,7 @@ class DepositMoneyController {
         return res.status(response.httpStatus).json(response);
       }
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      return res.status(response.httpStatus).json({ mgs: error.message });
     }
   }
 }
