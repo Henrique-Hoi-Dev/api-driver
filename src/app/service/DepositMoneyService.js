@@ -105,7 +105,7 @@ export default {
     result = {
       httpStatus: httpStatus.OK,
       status: 'successful',
-      dataResult: { ...depositMoney, value: Number(depositMoney.value) },
+      dataResult: depositMoney,
     };
     return result;
   },

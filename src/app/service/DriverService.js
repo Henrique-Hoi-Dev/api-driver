@@ -78,7 +78,9 @@ export default {
       return result;
     }
 
-    await driver.update(user.body);
+    // fazer a validação para quando os colunas tiverem dados mudar status para completo
+    // aqui também precisa fazer code para mudar de senha
+    await driver.update({ ...user.body });
 
     const driverResult = await Driver.findByPk(user.driverId, {
       attributes: [

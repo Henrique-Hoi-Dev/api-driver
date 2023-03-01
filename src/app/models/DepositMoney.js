@@ -9,8 +9,21 @@ class DepositMoney extends Model {
         type_transaction: Sequelize.STRING,
         local: Sequelize.STRING,
         type_bank: Sequelize.STRING,
-        value: Sequelize.DECIMAL,
+        value: Sequelize.INTEGER,
         proof_img: Sequelize.STRING,
+        payment: {
+          type: Sequelize.JSONB,
+          allowNull: false,
+          defaultValue: {
+            modo: '',
+            value: 0,
+            parcels: 0,
+            flag: '',
+          },
+          validate: {
+            notEmpty: true,
+          },
+        },
       },
       {
         sequelize,
