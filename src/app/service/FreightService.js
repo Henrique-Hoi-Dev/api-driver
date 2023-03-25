@@ -41,11 +41,13 @@ export default {
       user_id: financial.creator_user_id,
       freight_id: freight.id,
       driver_id: user.driverId,
+      financial_statements_id: financial.id,
     });
 
     result = {
       httpStatus: httpStatus.CREATED,
-      status: 'Check order successful!',
+      status: 'Create check successful!',
+      dataResult: freight,
     };
     return result;
   },
@@ -205,12 +207,10 @@ export default {
     return result;
   },
 
-  async updateFreight(req, res) {
+  async update(body, id) {
     let result = {};
 
-    let freightReq = req;
-
-    const freight = await Freight.findByPk(res.id);
+    const freight = await Freight.findByPk(id);
 
     if (!freight) {
       result = {
@@ -220,35 +220,32 @@ export default {
       return result;
     }
 
-    if (freight.dataValues.status === 'approved') {
+    if (freight.dataValues.status === 'APPROVED') {
       const financial = await FinancialStatements.findByPk(
         freight.financial_statements_id
       );
 
-      if (freight.final_total_tonne === null) {
-        await Notification.create({
-          content: `${financial.driver_name}, Inicio a viagem!`,
-          user_id: financial.creator_user_id,
-        });
-      }
+      await freight.update(body);
 
-      await freight.update(freightReq);
-
-      const freightResult = await Freight.findByPk(res.id);
+      await Notification.create({
+        content: `${financial.driver_name}, Inicio a viagem!`,
+        user_id: financial.creator_user_id,
+        financial_statements_id: financial.id,
+      });
 
       result = {
         httpStatus: httpStatus.OK,
         status: 'successful',
-        dataResult: freightResult,
-      };
-      return result;
-    } else {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        dataResult: { msg: 'Shipping was not approved' },
+        dataResult: await Freight.findByPk(id),
       };
       return result;
     }
+
+    result = {
+      httpStatus: httpStatus.OK,
+      dataResult: freight,
+    };
+    return result;
   },
 
   async deleteFreight(req, res) {

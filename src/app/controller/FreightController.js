@@ -29,9 +29,9 @@ class FreightController {
     }
   }
 
-  async updateFreight(req, res) {
+  async update(req, res) {
     try {
-      let response = await FreightService.updateFreight(req.body, req.params);
+      let response = await FreightService.update(req.body, req.params.id);
 
       if (response.httpStatus === 200) {
         return res.send(response);

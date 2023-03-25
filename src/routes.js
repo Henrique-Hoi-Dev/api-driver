@@ -39,7 +39,7 @@ routes
 
 routes
   .post('/driver/freight', FreightController.createFreight)
-  .put('/driver/freight/:id', FreightController.updateFreight)
+  .put('/driver/freight/:id', FreightController.update)
   .get('/driver/freight/:id', FreightController.getIdFreight)
   .delete('/driver/freight/:id', FreightController.deleteFreight);
 
