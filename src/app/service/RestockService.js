@@ -1,57 +1,43 @@
-import httpStatus from 'http-status-codes';
-
 import Restock from '../models/Restock';
 import Freight from '../models/Freight';
 import FinancialStatements from '../models/FinancialStatements';
 
 export default {
-  async createRestock(user, body) {
-    let result = {};
-
+  async create(driverId, body) {
     let { freight_id, value_fuel, liters_fuel } = body;
 
     const financial = await FinancialStatements.findOne({
-      where: { driver_id: user.driverId, status: true },
+      where: { driver_id: driverId, status: true },
     });
+    if (!financial) throw Error('Financial statements not found');
 
     const freight = await Freight.findByPk(freight_id);
+    if (!freight) throw Error('Freight not found');
 
-    if (!financial) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial statements not found',
-      };
+    if (freight.status === 'STARTING_TRIP') {
+      const total_value_fuel = value_fuel * liters_fuel;
+
+      const result = await Restock.create({
+        ...body,
+        total_value_fuel,
+        financial_statements_id: financial.id,
+      });
+
       return result;
     }
 
-    if (!freight) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' };
-      return result;
-    }
-
-    let total_value_fuel = value_fuel * liters_fuel;
-
-    await Restock.create({
-      ...body,
-      financial_statements_id: financial.id,
-      total_value_fuel,
-    });
-
-    result = { httpStatus: httpStatus.CREATED, status: 'successful' };
-    return result;
+    return { msg: 'This front is not traveling' };
   },
 
-  async getAllRestock(req, res) {
-    let result = {};
-
+  async getAll(query) {
     const {
       page = 1,
       limit = 100,
       sort_order = 'ASC',
       sort_field = 'id',
-    } = req.query;
-    const total = (await Restock.findAll()).length;
+    } = query;
 
+    const total = (await Restock.findAll()).length;
     const totalPages = Math.ceil(total / limit);
 
     const restocks = await Restock.findAll({
@@ -73,22 +59,16 @@ export default {
 
     const currentPage = Number(page);
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
+      dataResult: restocks,
       total,
       totalPages,
       currentPage,
-      dataResult: restocks,
     };
-
-    return result;
   },
 
-  async getIdRestock(req, res) {
-    let result = {};
-
-    let restock = await Restock.findByPk(req.id, {
+  async getId(id) {
+    const restock = await Restock.findByPk(id, {
       attributes: [
         'id',
         'name_establishment',
@@ -102,19 +82,10 @@ export default {
       ],
     });
 
-    if (!restock) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Restocks not found' },
-      };
-      return result;
-    }
+    if (!restock) throw Error('Restocks not found');
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
       dataResult: restock,
     };
-    return result;
   },
 };

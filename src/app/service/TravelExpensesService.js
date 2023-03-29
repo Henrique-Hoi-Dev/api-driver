@@ -5,49 +5,37 @@ import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
 
 export default {
-  async createTravelExpenses(user, body) {
-    let result = {};
+  async create(driverId, body) {
     let { freight_id } = body;
 
     const financial = await FinancialStatements.findOne({
-      where: { driver_id: user.driverId, status: true },
+      where: { driver_id: driverId, status: true },
     });
+    if (!financial) throw Error('Financial statements not found');
 
     const freight = await Freight.findByPk(freight_id);
+    if (!freight) throw Error('Freight not found');
 
-    if (!financial) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial statements not found',
-      };
+    if (freight.status === 'STARTING_TRIP') {
+      const result = await TravelExpenses.create({
+        ...body,
+        financial_statements_id: financial.id,
+      });
+
       return result;
     }
-
-    if (!freight) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' };
-      return result;
-    }
-
-    await TravelExpenses.create({
-      ...body,
-      financial_statements_id: financial.id,
-    });
-
-    result = { httpStatus: httpStatus.CREATED, status: 'successful' };
-    return result;
+    return { msg: 'This front is not traveling' };
   },
 
-  async getAllTravelExpenses(req, res) {
-    let result = {};
-
+  async getAll(query) {
     const {
       page = 1,
       limit = 100,
       sort_order = 'ASC',
       sort_field = 'id',
-    } = req.query;
-    const total = (await TravelExpenses.findAll()).length;
+    } = query;
 
+    const total = (await TravelExpenses.findAll()).length;
     const totalPages = Math.ceil(total / limit);
 
     const travelExpenses = await TravelExpenses.findAll({
@@ -66,22 +54,16 @@ export default {
 
     const currentPage = Number(page);
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
+      dataResult: travelExpenses,
       total,
       totalPages,
       currentPage,
-      dataResult: travelExpenses,
     };
-
-    return result;
   },
 
-  async getIdTravelExpenses(req, res) {
-    let result = {};
-
-    let travelExpense = await TravelExpenses.findByPk(req.id, {
+  async getId(id) {
+    const travelExpense = await TravelExpenses.findByPk(id, {
       attributes: [
         'id',
         'type_establishment',
@@ -92,19 +74,10 @@ export default {
       ],
     });
 
-    if (!travelExpense) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Travel Expense not found' },
-      };
-      return result;
-    }
+    if (!travelExpense) throw Error('Travel Expense not found');
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
       dataResult: travelExpense,
     };
-    return result;
   },
 };

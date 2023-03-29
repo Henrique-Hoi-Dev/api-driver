@@ -24,41 +24,38 @@ routes
   .put('/driver/update-profile', DriverController.update);
 
 routes
-  .put(
-    '/driver/financialStatement/:id',
-    FinancialStatementsController.updateFinancialStatements
-  )
+  .patch('/driver/financialStatement', FinancialStatementsController.update)
   .get(
     '/driver/financialStatement',
-    FinancialStatementsController.getIdFinancialStatements
+    FinancialStatementsController.getInProgress
   )
   .get(
     '/driver/financialStatements/finished',
-    FinancialStatementsController.getAllFinancialStatementsFinished
+    FinancialStatementsController.getAllFinished
   );
 
 routes
-  .post('/driver/freight', FreightController.createFreight)
+  .post('/driver/freight', FreightController.create)
   .put('/driver/freight/:id', FreightController.update)
-  .get('/driver/freight/:id', FreightController.getIdFreight)
-  .delete('/driver/freight/:id', FreightController.deleteFreight);
+  .get('/driver/freight/:id', FreightController.getId)
+  .delete('/driver/freight/:id', FreightController.delete);
 
 routes.get('/driver/notifications', NotificationController.getAll);
 routes.put('/driver/notifications/:id', NotificationController.update);
 
 routes
-  .post('/driver/deposit', DepositMoneyController.createDepositMoney)
-  .get('/driver/deposit/:id', DepositMoneyController.getIdDepositMoney)
-  .get('/driver/deposits', DepositMoneyController.getAllDepositMoney);
+  .post('/driver/deposit', DepositMoneyController.create)
+  .get('/driver/deposit/:id', DepositMoneyController.getId)
+  .get('/driver/deposits', DepositMoneyController.getAll);
 
 routes
-  .post('/driver/travel', TravelExpensesController.createTravelExpenses)
-  .get('/driver/travel/:id', TravelExpensesController.getIdTravelExpenses)
-  .get('/driver/travels', TravelExpensesController.getAllTravelExpenses);
+  .post('/driver/travel', TravelExpensesController.create)
+  .get('/driver/travel/:id', TravelExpensesController.getId)
+  .get('/driver/travels', TravelExpensesController.getAll);
 
 routes
-  .post('/driver/restock', RestockController.createRestock)
-  .get('/driver/restock/:id', RestockController.getIdRestock)
-  .get('/driver/restocks', RestockController.getAllRestock);
+  .post('/driver/restock', RestockController.create)
+  .get('/driver/restock/:id', RestockController.getId)
+  .get('/driver/restocks', RestockController.getAll);
 
 export default routes;

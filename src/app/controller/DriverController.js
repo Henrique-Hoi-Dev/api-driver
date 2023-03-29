@@ -1,45 +1,31 @@
+import HttpStatus from 'http-status';
 import DriverService from '../service/DriverService';
 
 class DriverController {
-  async profile(req, res) {
+  async profile(req, res, next) {
     try {
-      let response = await DriverService.profile(req.driverId);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response);
-      }
+      const data = await DriverService.profile(req.driverId);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async update(req, res) {
+  async update(req, res, next) {
     try {
-      let response = await DriverService.update(req);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg });
-      }
+      const data = await DriverService.update(req.driverId, req.body);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
   async forgotPassword(req, res) {
     try {
-      let response = await DriverService.update(req, req.body.code);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg });
-      }
+      const data = await DriverService.update(req, req.body.code);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 }

@@ -1,48 +1,31 @@
+import HttpStatus from 'http-status';
 import DepositMoneyService from '../service/DepositMoneyService';
 
 class DepositMoneyController {
-  async createDepositMoney(req, res) {
+  async create(req, res, next) {
     try {
-      let response = await DepositMoneyService.createDepositMoney(
-        req,
-        req.body
-      );
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response);
-      }
+      const data = await DepositMoneyService.create(req.driverProps, req.body);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(response.httpStatus).json({ error: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getAllDepositMoney(req, res) {
+  async getAll(req, res, next) {
     try {
-      let response = await DepositMoneyService.getAllDepositMoney(req.query);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response);
-      }
+      const data = await DepositMoneyService.getAll(req.query);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(response.httpStatus).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getIdDepositMoney(req, res) {
+  async getId(req, res, next) {
     try {
-      let response = await DepositMoneyService.getIdDepositMoney(req.params.id);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response);
-      }
+      const data = await DepositMoneyService.getId(req.params.id);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(response.httpStatus).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 }

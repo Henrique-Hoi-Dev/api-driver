@@ -1,54 +1,37 @@
+import HttpStatus from 'http-status';
 import FinancialStatementsService from '../service/FinancialStatementsService';
 
 class FinancialStatementsController {
-  async getAllFinancialStatementsFinished(req, res) {
+  async getAllFinished(req, res, next) {
     try {
-      let response =
-        await FinancialStatementsService.getAllFinancialStatementsFinished(
-          req,
-          res
-        );
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg });
-      }
-    } catch (error) {
-      return res.status(400).json({ mgs: error.message });
-    }
-  }
-
-  async getIdFinancialStatements(req, res) {
-    try {
-      let response = await FinancialStatementsService.getIdFinancialStatements(
-        req
+      const data = await FinancialStatementsService.getAllFinished(
+        req.driverId,
+        req.query
       );
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response);
-      }
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async updateFinancialStatements(req, res) {
+  async getInProgress(req, res, next) {
     try {
-      let response = await FinancialStatementsService.updateFinancialStatements(
+      const data = await FinancialStatementsService.getInProgress(req.driverId);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async update(req, res, next) {
+    try {
+      const data = await FinancialStatementsService.update(
         req.body,
-        req.params
+        req.driverId
       );
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg });
-      }
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message });
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 }

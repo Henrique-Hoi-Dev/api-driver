@@ -5,21 +5,24 @@ import Freight from '../models/Freight';
 import FinancialStatements from '../models/FinancialStatements';
 
 export default {
-  async getAllFinancialStatementsFinished(req, res) {
-    let result = {};
-
+  async getAllFinished(id, query) {
     const {
       page = 1,
       limit = 100,
       sort_order = 'ASC',
       sort_field = 'id',
-    } = req.query;
-    const total = (await FinancialStatements.findAll()).length;
+    } = query;
+
+    const total = (
+      await FinancialStatements.findAll({
+        where: { driver_id: id, status: false },
+      })
+    ).length;
 
     const totalPages = Math.ceil(total / limit);
 
     const financialStatements = await FinancialStatements.findAll({
-      where: { driver_id: req.driverId, status: false },
+      where: { driver_id: id, status: false },
       order: [[sort_field, sort_order]],
       limit: limit,
       offset: page - 1 ? (page - 1) * limit : 0,
@@ -76,23 +79,17 @@ export default {
 
     const currentPage = Number(page);
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
+      dataResult: financialStatements,
       total,
       totalPages,
       currentPage,
-      dataResult: financialStatements,
     };
-
-    return result;
   },
 
-  async getIdFinancialStatements(req, res) {
-    let result = {};
-
+  async getInProgress(id) {
     const financialStatement = await FinancialStatements.findOne({
-      where: { driver_id: req.driverId, status: true },
+      where: { driver_id: id, status: true },
       attributes: [
         'id',
         'creator_user_id',
@@ -144,64 +141,34 @@ export default {
       },
     });
 
-    if (!financialStatement) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Financial Statements not found' },
-      };
-      return result;
-    }
-
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      dataResult: financialStatement,
-    };
-    return result;
+    if (!financialStatement) throw Error('Financial Statements not found');
+    return { dataResult: financialStatement };
   },
 
-  async updateFinancialStatements(req, res) {
-    let result = {};
+  async update(body, driverId) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: driverId, status: true },
+    });
+    if (!financialStatement) throw Error('Financial not found');
 
-    let financialStatements = req;
+    const { id, truck_models, cart_models, driver_id } =
+      await financialStatement.update(body);
 
-    let financialStatementId = res.id;
-
-    const financialStatement = await FinancialStatements.findByPk(
-      financialStatementId
-    );
-
-    if (!financialStatement) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial not found',
-      };
-      return result;
-    }
-
-    const resultUpdate = await financialStatement.update(financialStatements);
-
-    const driverFinancial = await Driver.findByPk(resultUpdate.driver_id);
-
-    if (!driverFinancial) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Driver not found',
-      };
-      return result;
-    }
-
-    const creditUser = 0;
-
-    const { truck_models, cart_models } = resultUpdate;
+    const driverFinancial = await Driver.findByPk(driver_id);
+    if (!driverFinancial) throw Error('Driver not found');
 
     await driverFinancial.update({
-      credit: creditUser,
+      credit: 0,
       truck: truck_models,
       cart: cart_models,
     });
 
-    result = { httpStatus: httpStatus.OK, status: 'successful' };
-    return result;
+    const driver = await Driver.findByPk(driver_id, {
+      attributes: ['credit', 'truck', 'cart'],
+    });
+
+    const financial = await FinancialStatements.findByPk(id);
+
+    return { dataResult: driver, financial: financial };
   },
 };

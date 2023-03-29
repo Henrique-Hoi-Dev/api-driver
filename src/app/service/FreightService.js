@@ -8,28 +8,14 @@ import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 
 export default {
-  async createFreight(user, body) {
-    let result = {};
-
+  async create(driverId, body) {
     const financial = await FinancialStatements.findOne({
-      where: { driver_id: user.driverId, status: true },
+      where: { driver_id: driverId, status: true },
     });
 
-    if (!financial) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial not found',
-      };
-      return result;
-    }
-
-    if (financial.status === false) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'This form has already been finished',
-      };
-      return result;
-    }
+    if (!financial) throw Error('Financial not found');
+    if (financial.status === false)
+      throw Error('This form has already been finished');
 
     const freight = await Freight.create({
       ...body,
@@ -40,19 +26,16 @@ export default {
       content: `${financial.driver_name}, Requisitou um novo check frete!`,
       user_id: financial.creator_user_id,
       freight_id: freight.id,
-      driver_id: user.driverId,
+      driver_id: driverId,
       financial_statements_id: financial.id,
     });
 
-    result = {
-      httpStatus: httpStatus.CREATED,
-      status: 'Create check successful!',
+    return {
       dataResult: freight,
     };
-    return result;
   },
 
-  async getIdFreight(id) {
+  async getId(id) {
     let result = {};
 
     const freight = await Freight.findByPk(id, {
@@ -208,19 +191,10 @@ export default {
   },
 
   async update(body, id) {
-    let result = {};
-
     const freight = await Freight.findByPk(id);
+    if (!freight) throw Error('Freight not found');
 
-    if (!freight) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        dataResult: { msg: 'Freight not found' },
-      };
-      return result;
-    }
-
-    if (freight.dataValues.status === 'APPROVED') {
+    if (freight.status === 'APPROVED') {
       const financial = await FinancialStatements.findByPk(
         freight.financial_statements_id
       );
@@ -233,45 +207,20 @@ export default {
         financial_statements_id: financial.id,
       });
 
-      result = {
-        httpStatus: httpStatus.OK,
-        status: 'successful',
-        dataResult: await Freight.findByPk(id),
-      };
-      return result;
+      return { dataResult: await Freight.findByPk(id) };
     }
 
-    result = {
-      httpStatus: httpStatus.OK,
-      dataResult: freight,
-    };
-    return result;
+    return { dataResult: freight };
   },
 
-  async deleteFreight(req, res) {
-    let result = {};
-
-    const id = req.id;
-
+  async delete(id) {
     const freight = await Freight.destroy({
       where: {
         id: id,
       },
     });
+    if (!freight) throw Error('Freight not found');
 
-    if (!freight) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        dataResult: { msg: 'Freight not found' },
-      };
-      return result;
-    }
-
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      dataResult: { msg: 'Deleted freight' },
-    };
-    return result;
+    return { msg: 'Deleted freight' };
   },
 };

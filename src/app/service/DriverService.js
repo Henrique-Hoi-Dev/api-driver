@@ -1,13 +1,9 @@
 import * as Yup from 'yup';
-import httpStatus from 'http-status-codes';
-
 import Driver from '../models/Driver';
 
 export default {
   async profile(id) {
-    let result = {};
-
-    let driver = await Driver.findByPk(id, {
+    const driver = await Driver.findByPk(id, {
       attributes: [
         'id',
         'name',
@@ -26,25 +22,14 @@ export default {
       ],
     });
 
-    if (!driver) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        responseData: { msg: 'Driver not found' },
-      };
-      return result;
-    }
+    if (!driver) throw Error('Driver not found');
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
       dataResult: driver,
     };
-    return result;
   },
 
-  async update(user, code) {
-    let result = {};
-
+  async update(id, body) {
     const schema = Yup.object().shape({
       name: Yup.string(),
       oldPassword: Yup.string().min(8),
@@ -58,55 +43,37 @@ export default {
       ),
     });
 
-    if (!(await schema.isValid(user.body))) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Validation failed!',
-      };
-      return result;
-    }
+    if (!(await schema.isValid(body))) throw Error('Validation failed!');
 
-    const { oldPassword } = user.body;
+    const { oldPassword } = body;
 
-    const driver = await Driver.findByPk(user.driverId);
+    const driver = await Driver.findByPk(id);
 
-    if (oldPassword && !(await driver.checkPassword(oldPassword))) {
-      result = {
-        httpStatus: httpStatus.METHOD_FAILURE,
-        msg: 'Password does not match!',
-      };
-      return result;
-    }
+    if (oldPassword && !(await driver.checkPassword(oldPassword)))
+      throw Error('Password does not match!');
 
-    // fazer a validação para quando os colunas tiverem dados mudar status para completo
-    // aqui também precisa fazer code para mudar de senha
-    await driver.update({ ...user.body });
+    await driver.update({ ...body });
 
-    const driverResult = await Driver.findByPk(user.driverId, {
-      attributes: [
-        'id',
-        'name',
-        'name_user',
-        'number_cnh',
-        'valid_cnh',
-        'date_valid_mopp',
-        'date_valid_nr20',
-        'date_valid_nr35',
-        'cpf',
-        'date_admission',
-        'date_birthday',
-        'credit',
-        'value_fix',
-        'percentage',
-        'daily',
-      ],
-    });
-
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      dataResult: driverResult,
+    return {
+      dataResult: await Driver.findByPk(id, {
+        attributes: [
+          'id',
+          'name',
+          'name_user',
+          'number_cnh',
+          'valid_cnh',
+          'date_valid_mopp',
+          'date_valid_nr20',
+          'date_valid_nr35',
+          'cpf',
+          'date_admission',
+          'date_birthday',
+          'credit',
+          'value_fix',
+          'percentage',
+          'daily',
+        ],
+      }),
     };
-    return result;
   },
 };

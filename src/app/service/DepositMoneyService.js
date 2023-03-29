@@ -1,46 +1,32 @@
-import httpStatus from 'http-status-codes';
-
 import DepositMoney from '../models/DepositMoney';
 import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
 
 export default {
-  async createDepositMoney(user, body) {
-    let result = {};
-
+  async create(user, body) {
     const { freight_id } = body;
 
     const financial = await FinancialStatements.findOne({
-      where: { driver_id: user.driverId, status: true },
+      where: { driver_id: user.id, status: true },
     });
+    if (!financial) throw Error('Financial statements not found');
 
     const freight = await Freight.findByPk(freight_id);
 
-    if (!financial) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Financial statements not found',
-      };
+    if (!freight) throw Error('Freight not found');
+
+    if (freight.status === 'STARTING_TRIP') {
+      const result = await DepositMoney.create({
+        ...body,
+        financial_statements_id: financial.id,
+      });
       return result;
     }
 
-    if (!freight) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' };
-      return result;
-    }
-
-    await DepositMoney.create({
-      ...body,
-      financial_statements_id: financial.id,
-    });
-
-    result = { httpStatus: httpStatus.CREATED, status: 'successful' };
-    return result;
+    return { msg: 'This front is not traveling' };
   },
 
-  async getAllDepositMoney(query) {
-    let result = {};
-
+  async getAll(query) {
     const {
       page = 1,
       limit = 100,
@@ -68,22 +54,16 @@ export default {
 
     const currentPage = Number(page);
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
+    return {
+      dataResult: depositMoney,
       total,
       totalPages,
       currentPage,
-      dataResult: depositMoney,
     };
-
-    return result;
   },
 
-  async getIdDepositMoney(id) {
-    let result = {};
-
-    let depositMoney = await DepositMoney.findByPk(id, {
+  async getId(id) {
+    const depositMoney = await DepositMoney.findByPk(id, {
       attributes: [
         'id',
         'type_transaction',
@@ -94,19 +74,8 @@ export default {
       ],
     });
 
-    if (!depositMoney) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Deposit Money not found',
-      };
-      return result;
-    }
+    if (!depositMoney) throw Error('Deposit Money not found');
 
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      dataResult: depositMoney,
-    };
-    return result;
+    return { dataResult: depositMoney };
   },
 };
