@@ -1,5 +1,3 @@
-import httpStatus from 'http-status-codes';
-
 import Freight from '../models/Freight';
 import Notification from '../models/Notification';
 import FinancialStatements from '../models/FinancialStatements';
@@ -12,12 +10,22 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-
     if (!financial) throw Error('Financial not found');
     if (financial.status === false)
       throw Error('This form has already been finished');
 
-    const freight = await Freight.create({
+    const freight = await Freight.findAll({
+      where: { financial_statements_id: financial.id },
+    });
+
+    if (freight.length > 0) {
+      const first = freight.map((res) => res.dataValues);
+      await financial.update({
+        start_km: first[0].truck_current_km,
+      });
+    }
+
+    const result = await Freight.create({
       ...body,
       financial_statements_id: financial.id,
     });
@@ -31,17 +39,14 @@ export default {
     });
 
     return {
-      dataResult: freight,
+      dataResult: result,
     };
   },
 
   async getId(id) {
-    let result = {};
-
     const freight = await Freight.findByPk(id, {
       include: [
         {
-          // bastecidas
           model: Restock,
           as: 'restock',
           attributes: [
@@ -55,7 +60,6 @@ export default {
           ],
         },
         {
-          // despesas da viagem
           model: TravelExpenses,
           as: 'travel_expense',
           attributes: [
@@ -67,7 +71,6 @@ export default {
           ],
         },
         {
-          // deposito feito na viagem
           model: DepositMoney,
           as: 'deposit_money',
           attributes: ['id', 'type_transaction', 'local', 'type_bank', 'value'],
@@ -75,119 +78,9 @@ export default {
       ],
     });
 
-    if (!freight) {
-      result = {
-        httpStatus: httpStatus.BAD_REQUEST,
-        msg: 'Freight not found',
-      };
-      return result;
-    }
-    // ton value and predicted fuel value
-    const value_tonne = freight.value_tonne / 100;
-    const preview_valueDiesel = freight.preview_value_diesel / 100;
-    const preview_tonne = freight.preview_tonne * 100;
-    // predicted gross value
-    const preview_valueGross = preview_tonne * value_tonne;
-    // fuel consumption forecast
-    const amountSpentOnFuel =
-      preview_valueDiesel / freight.preview_average_fuel;
-    const resultValue =
-      Math.round(freight.travel_km / 1000) * Math.round(amountSpentOnFuel);
+    if (!freight) throw Error('Freight not found');
 
-    const discounted_fuel = preview_valueGross - Math.round(resultValue) * 100;
-
-    // total value supplied
-    const quantityRestock = freight.restock.map(function (res) {
-      return parseInt(res.dataValues.total_value_fuel);
-    });
-    const totalQuantityRestock = quantityRestock.reduce(function (
-      previousValue,
-      currentValue
-    ) {
-      return Number(previousValue) + Number(currentValue);
-    },
-    0 && quantityRestock);
-    // total amount expenses
-    const quantityExpenses = freight.travel_expense.map(function (res) {
-      return parseInt(res.dataValues.value);
-    });
-    const totalQuantityExpenses = quantityExpenses.reduce(function (
-      previousValue,
-      currentValue
-    ) {
-      return Number(previousValue) + Number(currentValue);
-    },
-    0 && quantityRestock);
-    // total amount deposit money
-    const quantityDepositMoney = freight.deposit_money.map(function (res) {
-      return parseInt(res.dataValues.value);
-    });
-    const totalQuantityDepositMoney = quantityDepositMoney.reduce(function (
-      previousValue,
-      currentValue
-    ) {
-      return Number(previousValue) + Number(currentValue);
-    },
-    0 && quantityRestock);
-
-    result = {
-      httpStatus: httpStatus.OK,
-      status: 'successful',
-      dataResult: {
-        first_check: {
-          start_city: freight.start_city,
-          final_city: freight.final_city,
-          location_truck: freight.location_of_the_truck,
-          start_current_km: freight.start_km,
-          travel_km: freight.travel_km,
-          preview_average_fuel: freight.average_fuel,
-          preview_tonne: freight.preview_tonne,
-          preview_value_diesel: freight.preview_value_diesel,
-          value_tonne: freight.value_tonne,
-          status: freight.status,
-          item_total: {
-            preview_valueGross: preview_valueGross,
-            preview_fuel_expense: Math.round(resultValue) * 100,
-            fuel_discount_on_shipping: discounted_fuel,
-          },
-        },
-        // check apoapproved
-        second_check: {
-          final_km: freight.final_km,
-          final_total_tonne: freight.final_total_tonne,
-          toll_value: freight.toll_value,
-          discharge: freight.discharge,
-          img_proof_cte: freight.img_proof_cte,
-          img_proof_ticket: freight.img_proof_ticket,
-          img_proof_freight_letter: freight.img_proof_freight_letter,
-          item_total: {
-            total_value_fuel: totalQuantityRestock,
-            total_value_expenses: totalQuantityExpenses,
-            total_deposit_money: totalQuantityDepositMoney,
-          },
-        },
-        restock: freight.restock,
-        travel_expense: freight.travel_expense,
-        deposit_money: freight.deposit_money,
-      },
-    };
-
-    if (freight.final_km === null)
-      delete result.dataResult.second_check.final_km;
-    if (freight.final_total_tonne === null)
-      delete result.dataResult.second_check.final_total_tonne;
-    if (freight.toll_value === null)
-      delete result.dataResult.second_check.toll_value;
-    if (freight.discharge === null)
-      delete result.dataResult.second_check.discharge;
-    if (freight.img_proof_cte === null)
-      delete result.dataResult.second_check.img_proof_cte;
-    if (freight.img_proof_ticket === null)
-      delete result.dataResult.second_check.img_proof_ticket;
-    if (freight.img_proof_freight_letter === null)
-      delete result.dataResult.second_check.img_proof_freight_letter;
-
-    return result;
+    return freight;
   },
 
   async update(body, id) {
@@ -210,7 +103,19 @@ export default {
       return { dataResult: await Freight.findByPk(id) };
     }
 
-    return { dataResult: freight };
+    if (freight.status === 'STARTING_TRIP') {
+      const result = await freight.update({
+        tons_loaded: body.tons_loaded,
+        toll_value: body.toll_value,
+        truck_km_completed_trip: body.truck_km_completed_trip,
+        discharge: body.discharge,
+        img_proof_cte: body.img_proof_cte,
+        img_proof_ticket: body.img_proof_ticket,
+        img_proof_freight_letter: body.img_proof_freight_letter,
+      });
+
+      return { dataResult: result };
+    }
   },
 
   async delete(id) {

@@ -1,5 +1,3 @@
-import httpStatus from 'http-status-codes';
-
 import Driver from '../models/Driver';
 import Freight from '../models/Freight';
 import FinancialStatements from '../models/FinancialStatements';
