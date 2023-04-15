@@ -33,7 +33,7 @@ export default {
     await Notification.create({
       content: `${financial.driver_name}, Requisitou um novo check frete!`,
       user_id: financial.creator_user_id,
-      freight_id: freight.id,
+      freight_id: result.id,
       driver_id: driverId,
       financial_statements_id: financial.id,
     });
@@ -83,6 +83,49 @@ export default {
     return freight;
   },
 
+  async _calculate(values) {
+    let initialValue = 0;
+    let total = values.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue
+    );
+    return total;
+  },
+
+  async _updateValorFinancial(props) {
+    const financial = await FinancialStatements.findOne({
+      where: { id: props.financial_statements_id, status: true },
+    });
+
+    const restock = await Restock.findAll({ where: { freight_id: props.id } });
+    const valoresRestock = restock.map((res) => res.total_nota_value);
+    const totalvalueRestock = await this._calculate(valoresRestock);
+
+    const travel = await TravelExpenses.findAll({
+      where: { freight_id: props.id },
+    });
+    const valoresTravel = travel.map((res) => res.value);
+    const totalvalueTravel = await this._calculate(valoresTravel);
+
+    const deposit = await DepositMoney.findAll({
+      where: { freight_id: props.id },
+    });
+    const valoresDeposit = deposit.map((res) => res.value);
+    const totalvalueDeposit = await this._calculate(valoresDeposit);
+
+    console.log(
+      '🚀 ~ file: FreightService.js:116 ~ _updateValorFinancial ~ totalvalueDeposit:',
+      totalvalueRestock,
+      totalvalueTravel
+    );
+
+    await financial.update({
+      total_value:
+        (await this._calculate([totalvalueTravel, totalvalueRestock])) -
+        totalvalueDeposit,
+    });
+  },
+
   async update(body, id) {
     const freight = await Freight.findByPk(id);
     if (!freight) throw Error('Freight not found');
@@ -113,6 +156,8 @@ export default {
         img_proof_ticket: body.img_proof_ticket,
         img_proof_freight_letter: body.img_proof_freight_letter,
       });
+
+      await this._updateValorFinancial(result);
 
       return { dataResult: result };
     }

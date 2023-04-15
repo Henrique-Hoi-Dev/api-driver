@@ -149,14 +149,14 @@ export default {
     });
     if (!financialStatement) throw Error('Financial not found');
 
-    const { id, truck_models, cart_models, driver_id } =
+    const { id, truck_models, total_value, cart_models, driver_id } =
       await financialStatement.update(body);
 
     const driverFinancial = await Driver.findByPk(driver_id);
     if (!driverFinancial) throw Error('Driver not found');
 
     await driverFinancial.update({
-      credit: 0,
+      credit: total_value,
       truck: truck_models,
       cart: cart_models,
     });
