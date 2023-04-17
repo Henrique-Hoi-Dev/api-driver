@@ -10,6 +10,7 @@ import TravelExpenses from '../app/models/TravelExpenses';
 import DepositMoney from '../app/models/DepositMoney';
 import Notification from '../app/models/Notification';
 import FinancialStatements from '../app/models/FinancialStatements';
+import Credit from '../app/models/Credit';
 
 import databaseConfig from '../config/database.js';
 
@@ -24,6 +25,7 @@ const models = [
   FinancialStatements,
   TravelExpenses,
   Restock,
+  Credit,
 ];
 
 class Database {

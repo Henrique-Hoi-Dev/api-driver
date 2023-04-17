@@ -1,6 +1,7 @@
 import DepositMoney from '../models/DepositMoney';
 import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
+import Driver from '../models/Driver';
 
 export default {
   async create(user, body) {
@@ -20,6 +21,22 @@ export default {
         ...body,
         financial_statements_id: financial.id,
       });
+
+      const driverFind = await Driver.findByPk(user.id);
+      driverFind.addTransaction({
+        value: result.value,
+        typeTransactions: result.type_transaction,
+      });
+
+      const driver = await Driver.findByPk(driverFind.id);
+      const values = driverFind.transactions.map((res) => res.value);
+      const total = values.reduce((acc, cur) => acc + cur, 0);
+
+      await driver.update({
+        transactions: driverFind.transactions,
+        credit: total,
+      });
+
       return result;
     }
 
