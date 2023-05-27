@@ -8,11 +8,24 @@ class Restock extends Model {
         freight_id: Sequelize.INTEGER,
         name_establishment: Sequelize.STRING,
         city: Sequelize.STRING,
-        date: Sequelize.DATEONLY,
-        value_fuel: Sequelize.DOUBLE,
-        liters_fuel: Sequelize.DOUBLE,
-        total_value_fuel: Sequelize.DOUBLE,
-        total_nota_value: Sequelize.DOUBLE,
+        date: Sequelize.DATE,
+        value_fuel: Sequelize.INTEGER,
+        liters_fuel: Sequelize.INTEGER,
+        total_value_fuel: Sequelize.INTEGER,
+        total_nota_value: Sequelize.INTEGER,
+        payment: {
+          type: Sequelize.JSONB,
+          allowNull: false,
+          defaultValue: {
+            modo: '',
+            value: 0,
+            parcels: 0,
+            flag: '',
+          },
+          validate: {
+            notEmpty: true,
+          },
+        },
       },
       {
         sequelize,
@@ -23,7 +36,10 @@ class Restock extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.FinancialStatements, { foreignKey: 'financial_statements_id', as: 'financialStatements' });
+    this.belongsTo(models.FinancialStatements, {
+      foreignKey: 'financial_statements_id',
+      as: 'financialStatements',
+    });
     this.belongsTo(models.Freight, { foreignKey: 'freight_id', as: 'freight' });
   }
 }

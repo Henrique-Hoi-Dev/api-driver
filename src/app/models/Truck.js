@@ -8,8 +8,8 @@ class Truck extends Model {
         truck_name_brand: Sequelize.STRING,
         truck_board: Sequelize.STRING,
         truck_color: Sequelize.STRING,
-        truck_km: Sequelize.DOUBLE,
-        truck_chassis: Sequelize.DOUBLE,
+        truck_km: Sequelize.DECIMAL,
+        truck_chassis: Sequelize.DECIMAL,
         truck_year: Sequelize.STRING,
         truck_avatar: Sequelize.STRING,
       },
@@ -22,7 +22,10 @@ class Truck extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.FinancialStatements, { foreignKey: 'truck_id', as: 'financialStatements' });
+    this.hasMany(models.FinancialStatements, {
+      foreignKey: 'truck_id',
+      as: 'financialStatements',
+    });
   }
 }
 

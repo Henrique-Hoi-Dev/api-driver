@@ -7,10 +7,12 @@ class Notification extends Model {
         content: Sequelize.STRING,
         driver_id: Sequelize.INTEGER,
         user_id: Sequelize.INTEGER,
+        freight_id: Sequelize.INTEGER,
+        financial_statements_id: Sequelize.INTEGER,
         read: {
           type: Boolean,
-          defaultValue: false
-        }
+          defaultValue: false,
+        },
       },
       {
         sequelize,

@@ -1,51 +1,39 @@
+import HttpStatus from 'http-status';
 import FinancialStatementsService from '../service/FinancialStatementsService';
 
 class FinancialStatementsController {
-
-  async getAllFinancialStatements(req, res) {
+  async getAllFinished(req, res, next) {
     try {
-      let response = await FinancialStatementsService.getAllFinancialStatements(req, res);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
-      }
-
+      const data = await FinancialStatementsService.getAllFinished(
+        req.driverId,
+        req.query
+      );
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getIdFinancialStatements(req, res) { 
+  async getInProgress(req, res, next) {
     try {
-      let response = await FinancialStatementsService.getIdFinancialStatements(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
+      const data = await FinancialStatementsService.getInProgress(req.driverId);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async updateFinancialStatements(req, res) {
+  async update(req, res, next) {
     try {
-      let response = await FinancialStatementsService.updateFinancialStatements(req.body, req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json({ msg: response.msg })
-      }
-
+      const data = await FinancialStatementsService.update(
+        req.body,
+        req.driverId
+      );
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
-  } 
+  }
 }
 
 export default new FinancialStatementsController();

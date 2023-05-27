@@ -6,12 +6,27 @@ class TravelExpenses extends Model {
       {
         financial_statements_id: Sequelize.INTEGER,
         freight_id: Sequelize.INTEGER,
+        city: Sequelize.STRING,
+        date: Sequelize.DATE,
         type_establishment: Sequelize.STRING,
         name_establishment: Sequelize.STRING,
         expense_description: Sequelize.STRING,
         dfe: Sequelize.STRING,
-        value: Sequelize.DOUBLE,
+        value: Sequelize.INTEGER,
         proof_img: Sequelize.STRING,
+        payment: {
+          type: Sequelize.JSONB,
+          allowNull: false,
+          defaultValue: {
+            modo: '',
+            value: 0,
+            parcels: 0,
+            flag: '',
+          },
+          validate: {
+            notEmpty: true,
+          },
+        },
       },
       {
         sequelize,
@@ -22,7 +37,10 @@ class TravelExpenses extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.FinancialStatements, { foreignKey: 'financial_statements_id', as: 'financialStatements' });
+    this.belongsTo(models.FinancialStatements, {
+      foreignKey: 'financial_statements_id',
+      as: 'financialStatements',
+    });
     this.belongsTo(models.Freight, { foreignKey: 'freight_id', as: 'freight' });
   }
 }

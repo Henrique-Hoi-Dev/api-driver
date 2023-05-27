@@ -3,10 +3,7 @@ import routes from './routes';
 import cors from 'cors';
 import sequelize from './database/sequelize';
 
-import "dotenv/config"
-
-// só para rodar migration na Produção ou confinguração local
-// import './database';
+import 'dotenv/config';
 
 class App {
   constructor() {
@@ -27,7 +24,7 @@ class App {
   }
 
   sequelize() {
-    sequelize
+    sequelize;
   }
 }
 

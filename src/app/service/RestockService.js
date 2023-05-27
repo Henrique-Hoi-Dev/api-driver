@@ -1,165 +1,91 @@
-import httpStatus from 'http-status-codes';
-
-import Restock from "../models/Restock";
-import Freight from "../models/Freight";
-import FinancialStatements from "../models/FinancialStatements";
+import Restock from '../models/Restock';
+import Freight from '../models/Freight';
+import FinancialStatements from '../models/FinancialStatements';
 
 export default {
-  async createRestock(req, res) {
-    let result = {}
+  async create(driverId, body) {
+    let { freight_id, value_fuel, liters_fuel } = body;
 
-    let { 
-      financial_statements_id,
-      freight_id,
-      name_establishment, 
-      city, 
-      date, 
-      value_fuel, 
-      liters_fuel, 
-      total_nota_value 
-    } = req;
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: driverId, status: true },
+    });
+    if (!financial) throw Error('Financial statements not found');
 
-    const financial = await FinancialStatements.findByPk(financial_statements_id)
-    const freight = await Freight.findByPk(freight_id)
+    const freight = await Freight.findByPk(freight_id);
+    if (!freight) throw Error('Freight not found');
 
-    if (!financial) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial statements not found' }      
-      return result
+    if (freight.status === 'STARTING_TRIP') {
+      const total_value_fuel = value_fuel * liters_fuel;
+
+      const result = await Restock.create({
+        ...body,
+        total_value_fuel,
+        financial_statements_id: financial.id,
+      });
+
+      return result;
     }
 
-    if (!freight) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Freight not found' }      
-      return result
-    }
-
-    let total_value_fuel = value_fuel * liters_fuel
-
-    let restockBody = { 
-      financial_statements_id,
-      freight_id,
-      name_establishment, 
-      value_fuel, 
-      liters_fuel, 
-      city, 
-      date, 
-      total_nota_value, 
-      total_value_fuel 
-    } 
-
-    await Restock.create(restockBody);
-
-    result = { httpStatus: httpStatus.CREATED, status: "successful" }      
-    return result
+    return { msg: 'This front is not traveling' };
   },
 
-  async getAllRestock(req, res) {
-    let result = {}
+  async getAll(query) {
+    const {
+      page = 1,
+      limit = 100,
+      sort_order = 'ASC',
+      sort_field = 'id',
+    } = query;
 
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
     const total = (await Restock.findAll()).length;
-
     const totalPages = Math.ceil(total / limit);
 
     const restocks = await Restock.findAll({
-      order: [[ sort_field, sort_order ]],
+      order: [[sort_field, sort_order]],
       limit: limit,
-      offset: (page - 1) ? (page - 1) * limit : 0,
-      attributes: [ 
-        'id',
-        'name_establishment', 
-        'freight_id',
-        'city', 
-        'date', 
-        'value_fuel', 
-        'liters_fuel', 
-        'total_value_fuel', 
-        'total_nota_value', 
-      ], 
-    });
-
-    const currentPage = Number(page)
-
-    result = { 
-      httpStatus: httpStatus.OK, 
-      status: "successful", 
-      total, 
-      totalPages, 
-      currentPage, 
-      dataResult: restocks 
-    } 
-
-    return result
-  },
-
-  async getIdRestock(req, res) {
-    let result = {}
-
-    let restock = await Restock.findByPk(req.id, {
-      attributes: [ 
-        'id',
-        'name_establishment',
-        'freight_id',
-        'city', 
-        'date', 
-        'value_fuel', 
-        'liters_fuel', 
-        'total_value_fuel', 
-        'total_nota_value',
-      ],  
-    });
-
-    if (!restock) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Restocks not found' }}      
-      return result
-    }
-
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: restock }      
-    return result
-  },
-
-  async updateRestock(req, res) {   
-    let result = {}
-
-    let restocks = req
-    let restockId = res.id
-
-    const restock = await Restock.findByPk(restockId);
-
-    await restock.update(restocks);
-
-    const restockResult = await Restock.findByPk(restockId, {
+      offset: page - 1 ? (page - 1) * limit : 0,
       attributes: [
         'id',
         'name_establishment',
         'freight_id',
-        'city', 
-        'date', 
-        'value', 
-        'proof_img', 
+        'city',
+        'date',
+        'value_fuel',
+        'liters_fuel',
+        'total_value_fuel',
+        'total_nota_value',
       ],
     });
 
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: restockResult }      
-    return result
-  },
-  
-  async deleteRestock(req, res) {
-    let result = {}
-    
-    const id  = req.id;
+    const currentPage = Number(page);
 
-    const restock = await Restock.destroy({
-      where: {
-        id: id,
-      },
+    return {
+      dataResult: restocks,
+      total,
+      totalPages,
+      currentPage,
+    };
+  },
+
+  async getId(id) {
+    const restock = await Restock.findByPk(id, {
+      attributes: [
+        'id',
+        'name_establishment',
+        'freight_id',
+        'city',
+        'date',
+        'value_fuel',
+        'liters_fuel',
+        'total_value_fuel',
+        'total_nota_value',
+      ],
     });
 
-    if (!restock) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Restocks not found' }}      
-      return result
-    }
+    if (!restock) throw Error('Restocks not found');
 
-    result = {httpStatus: httpStatus.OK, status: "successful", responseData: { msg: 'Deleted restock' }}      
-    return result
-  }
-}
+    return {
+      dataResult: restock,
+    };
+  },
+};

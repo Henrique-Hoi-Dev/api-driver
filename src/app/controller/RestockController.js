@@ -1,79 +1,31 @@
+import HttpStatus from 'http-status';
 import RestockService from '../service/RestockService';
 
 class RestockController {
-
-  async createRestock(req, res) {
+  async create(req, res, next) {
     try {
-      let response = await RestockService.createRestock(req.body);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-            
+      const data = await RestockService.create(req.driverId, req.body);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ error: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getAllRestock(req, res) {
+  async getAll(req, res, next) {
     try {
-      let response = await RestockService.getAllRestock(req, res);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
+      const data = await RestockService.getAll(req.query);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getIdRestock(req, res) { 
+  async getId(req, res, next) {
     try {
-      let response = await RestockService.getIdRestock(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
+      const data = await RestockService.getId(req.params.id);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  }
-
-  async updateRestock(req, res) {
-    try {
-      let response = await RestockService.updateRestock(req.body, req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  } 
-
-  async deleteRestock(req, res) {
-    try {
-      let response = await RestockService.deleteRestock(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(200).json({ mgs: error.message})
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 }

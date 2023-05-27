@@ -1,26 +1,33 @@
-import httpStatus from 'http-status-codes';
-
 import Driver from '../models/Driver';
-import Truck from '../models/Truck';
-import Cart from '../models/Cart';
 import Freight from '../models/Freight';
-import FinancialStatements from "../models/FinancialStatements";
+import FinancialStatements from '../models/FinancialStatements';
+import Restock from '../models/Restock';
 
 export default {
-  async getAllFinancialStatements(req, res) {
-    let result = {}
+  async getAllFinished(id, query) {
+    const {
+      page = 1,
+      limit = 100,
+      sort_order = 'ASC',
+      sort_field = 'id',
+    } = query;
 
-    const { page = 1, limit = 100, sort_order = 'ASC', sort_field = 'id' } = req.query;
-    const total = (await FinancialStatements.findAll()).length;
+    const total = (
+      await FinancialStatements.findAll({
+        where: { driver_id: id, status: false },
+      })
+    ).length;
 
     const totalPages = Math.ceil(total / limit);
 
     const financialStatements = await FinancialStatements.findAll({
-      order: [[ sort_field, sort_order ]],
+      where: { driver_id: id, status: false },
+      order: [[sort_field, sort_order]],
       limit: limit,
-      offset: (page - 1) ? (page - 1) * limit : 0,
-      attributes: [ 
-        'id', 
+      offset: page - 1 ? (page - 1) * limit : 0,
+      attributes: [
+        'id',
+        'creator_user_id',
         'driver_id',
         'truck_id',
         'cart_id',
@@ -30,62 +37,61 @@ export default {
         'start_date',
         'final_date',
         'driver_name',
+        'percentage_commission',
+        'fixed_commission',
+        'daily',
         'truck_models',
-        'truck_avatar',
         'truck_board',
         'cart_models',
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
         'total_value',
+        'truck_avatar',
       ],
       include: {
         model: Freight,
-        as: "freigth",
+        as: 'freigth',
         attributes: [
-          "id",
-          "financial_statements_id",
-          "start_city",
-          "final_city",
-          "location_of_the_truck",
-          "contractor",
-          "start_km",
-          "status_check_order",
-          "preview_tonne",
-          "value_tonne",
-          'average_fuel',
-          "preview_value_diesel",
-          "final_km",
-          "final_total_tonne",
-          "toll_value",
-          "discharge",
-          "img_proof_cte",
-          "img_proof_ticket",
-          "img_proof_freight_letter",
-        ]
-      }
+          'id',
+          'financial_statements_id',
+          'start_freight_city',
+          'final_freight_city',
+          'location_of_the_truck',
+          'contractor',
+          'truck_current_km',
+          'status',
+          'preview_tonne',
+          'value_tonne',
+          'liter_of_fuel_per_km',
+          'preview_value_diesel',
+          'truck_km_completed_trip',
+          'tons_loaded',
+          'toll_value',
+          'discharge',
+          'img_proof_cte',
+          'img_proof_ticket',
+          'img_proof_freight_letter',
+        ],
+      },
     });
 
-    const currentPage = Number(page)
+    const currentPage = Number(page);
 
-    result = { 
-      httpStatus: httpStatus.OK, 
-      status: "successful", 
-      total, 
-      totalPages, 
-      currentPage, 
-      dataResult: financialStatements 
-    }      
-    
-    return result
+    return {
+      dataResult: financialStatements,
+      total,
+      totalPages,
+      currentPage,
+    };
   },
 
-  async getIdFinancialStatements(req, res) {
-    let result = {}
-
-    let financialStatement = await FinancialStatements.findByPk(req.id, {
-      attributes: [ 
-        'id', 
+  async getInProgress(id) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: id, status: true },
+      attributes: [
+        'id',
+        'creator_user_id',
         'driver_id',
         'truck_id',
         'cart_id',
@@ -95,76 +101,116 @@ export default {
         'start_date',
         'final_date',
         'driver_name',
+        'percentage_commission',
+        'fixed_commission',
+        'daily',
         'truck_models',
-        'truck_avatar',
         'truck_board',
         'cart_models',
         'cart_board',
         'invoicing_all',
         'medium_fuel_all',
         'total_value',
+        'truck_avatar',
       ],
       include: {
         model: Freight,
-        as: "freigth",
+        as: 'freigth',
         attributes: [
-          "id",
-          "financial_statements_id",
-          "start_city",
-          "final_city",
-          'average_fuel',
-          "location_of_the_truck",
-          "contractor",
-          "start_km",
-          "status_check_order",
-          "preview_tonne",
-          "value_tonne",
-          "preview_value_diesel",
-          "final_km",
-          "final_total_tonne",
-          "toll_value",
-          "discharge",
-          "img_proof_cte",
-          "img_proof_ticket",
-          "img_proof_freight_letter",
-        ]
-      }
+          'id',
+          'financial_statements_id',
+          'start_freight_city',
+          'final_freight_city',
+          'location_of_the_truck',
+          'contractor',
+          'truck_current_km',
+          'status',
+          'preview_tonne',
+          'value_tonne',
+          'liter_of_fuel_per_km',
+          'preview_value_diesel',
+          'truck_km_completed_trip',
+          'tons_loaded',
+          'toll_value',
+          'discharge',
+          'img_proof_cte',
+          'img_proof_ticket',
+          'img_proof_freight_letter',
+        ],
+      },
     });
 
-    if (!financialStatement) {
-      result = {httpStatus: httpStatus.BAD_REQUEST, responseData: { msg: 'Financial Statements not found' }}      
-      return result
-    }
-
-    result = { httpStatus: httpStatus.OK, status: "successful", dataResult: financialStatement }      
-    return result
+    if (!financialStatement) throw Error('Financial Statements not found');
+    return { dataResult: financialStatement };
   },
 
-  async updateFinancialStatements(req, res) {   
-    let result = {}
+  async update(body, driverId) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: driverId, status: true },
+    });
+    if (!financialStatement) throw Error('Financial not found');
 
-    let financialStatements = req
+    const { id, truck_models, total_value, cart_models, driver_id } =
+      await financialStatement.update(body);
 
-    let financialStatementId = res.id
-    
-    const financialStatement = await FinancialStatements.findByPk(financialStatementId);
+    const driverFinancial = await Driver.findByPk(driver_id);
+    if (!driverFinancial) throw Error('Driver not found');
 
-    if (!financialStatement) {
-      result = { httpStatus: httpStatus.BAD_REQUEST, msg: 'Financial not found' }      
-      return result
-    }
+    await driverFinancial.update({
+      credit: total_value,
+      truck: truck_models,
+      cart: cart_models,
+    });
 
-    const resultUpdate = await financialStatement.update(financialStatements);
-    
-    const driverFinancial = await Driver.findByPk(resultUpdate.driver_id);
+    const driver = await Driver.findByPk(driver_id, {
+      attributes: ['credit', 'truck', 'cart'],
+    });
 
-    const creditUser = 0
+    const financial = await FinancialStatements.findByPk(id);
 
-    const { truck_models, cart_models } = resultUpdate
-
-    await driverFinancial.update({ credit: creditUser, truck: truck_models, cart: cart_models });
-
-    result = { httpStatus: httpStatus.OK, status: "successful" }      
-    return result
+    return { dataResult: driver, financial: financial };
   },
-}
+
+  async _calculate(values) {
+    let initialValue = 0;
+    let total = values.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue
+    );
+    return total;
+  },
+
+  async _updateValorFinancial(props) {
+    const financial = await FinancialStatements.findOne({
+      where: { id: props.financial_statements_id, status: true },
+    });
+
+    const restock = await Restock.findAll({ where: { freight_id: props.id } });
+    const valoresRestock = restock.map((res) => res.total_nota_value);
+    const totalvalueRestock = await this._calculate(valoresRestock);
+
+    const travel = await TravelExpenses.findAll({
+      where: { freight_id: props.id },
+    });
+    const valoresTravel = travel.map((res) => res.value);
+    const totalvalueTravel = await this._calculate(valoresTravel);
+
+    const deposit = await DepositMoney.findAll({
+      where: { freight_id: props.id },
+    });
+    const valoresDeposit = deposit.map((res) => res.value);
+    const totalvalueDeposit = await this._calculate(valoresDeposit);
+
+    console.log(
+      '🚀 ~ file: FreightService.js:116 ~ _updateValorFinancial ~ totalvalueDeposit:',
+      totalvalueRestock,
+      totalvalueTravel
+    );
+
+    await financial.update({
+      total_value:
+        (await this._calculate([totalvalueTravel, totalvalueRestock])) -
+        totalvalueDeposit,
+    });
+  },
+};

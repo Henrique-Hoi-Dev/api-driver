@@ -13,50 +13,49 @@ import authMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
 
-// cadastro
-routes.post('/driver/authenticate', SessionController.sessioDriver);
+routes
+  .post('/driver/authenticate', SessionController.sessioDriver)
+  .put('/driver/forgot-password', DriverController.forgotPassword);
 
-// autenticação
 routes.use(authMiddleware);
 
-routes.put('/update-profile', DriverController.updateDriver)
-      .get('/profile', DriverController.getProfileDriver);
+routes
+  .get('/driver/profile', DriverController.profile)
+  .put('/driver/update-profile', DriverController.update);
 
-// financial statements
-routes.put('/driver/financialStatement/:id', FinancialStatementsController.updateFinancialStatements)
-      .get('/driver/financialStatement/:id', FinancialStatementsController.getIdFinancialStatements);
+routes
+  .patch('/driver/financialStatement', FinancialStatementsController.update)
+  .get(
+    '/driver/financialStatement',
+    FinancialStatementsController.getInProgress
+  )
+  .get(
+    '/driver/financialStatements/finished',
+    FinancialStatementsController.getAllFinished
+  );
 
-// freight
-routes.post('/driver/freight', FreightController.createFreight)
-      .put('/driver/freight/:id', FreightController.updateFreight)
-      .get('/driver/freight/:id', FreightController.getIdFreight)
-      .delete('/driver/freight/:id', FreightController.deleteFreight);
+routes
+  .post('/driver/freight', FreightController.create)
+  .put('/driver/freight/:id', FreightController.update)
+  .get('/driver/freight/:id', FreightController.getId)
+  .delete('/driver/freight/:id', FreightController.delete);
 
-// notification
-// routes.get('/driver/notifications', NotificationController.getAllNotification);
 routes.get('/driver/notifications', NotificationController.getAll);
-routes.put('/driver/notification/:id', NotificationController.updateNotification);
 routes.put('/driver/notifications/:id', NotificationController.update);
 
-// deposit money
-routes.post('/driver/deposit', DepositMoneyController.createDepositMoney)
-      .put('/driver/deposit/:id', DepositMoneyController.updateDepositMoney)
-      .get('/driver/deposit/:id', DepositMoneyController.getIdDepositMoney)
-      .get('/driver/deposits', DepositMoneyController.getAllDepositMoney)
-      .delete('/driver/deposit/:id', DepositMoneyController.deleteDepositMoney);
+routes
+  .post('/driver/deposit', DepositMoneyController.create)
+  .get('/driver/deposit/:id', DepositMoneyController.getId)
+  .get('/driver/deposits', DepositMoneyController.getAll);
 
-// travel expenses
-routes.post('/driver/travel', TravelExpensesController.createTravelExpenses)
-      .put('/driver/travel/:id', TravelExpensesController.updateTravelExpenses)
-      .get('/driver/travel/:id', TravelExpensesController.getIdTravelExpenses)
-      .get('/driver/travels', TravelExpensesController.getAllTravelExpenses)
-      .delete('/driver/travel/:id', TravelExpensesController.deleteTravelExpenses);
+routes
+  .post('/driver/travel', TravelExpensesController.create)
+  .get('/driver/travel/:id', TravelExpensesController.getId)
+  .get('/driver/travels', TravelExpensesController.getAll);
 
-// restock
-routes.post('/driver/restock', RestockController.createRestock)
-      .put('/driver/restock/:id', RestockController.updateRestock)
-      .get('/driver/restock/:id', RestockController.getIdRestock)
-      .get('/driver/restocks', RestockController.getAllRestock)
-      .delete('/driver/restock/:id', RestockController.deleteRestock);
+routes
+  .post('/driver/restock', RestockController.create)
+  .get('/driver/restock/:id', RestockController.getId)
+  .get('/driver/restocks', RestockController.getAll);
 
 export default routes;

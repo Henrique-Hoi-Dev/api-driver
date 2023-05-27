@@ -1,79 +1,31 @@
+import HttpStatus from 'http-status';
 import TravelExpensesService from '../service/TravelExpensesService';
 
 class TravelExpensesController {
-
-  async createTravelExpenses(req, res) {
+  async create(req, res, next) {
     try {
-      let response = await TravelExpensesService.createTravelExpenses(req.body);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-            
+      const data = await TravelExpensesService.create(req.driverId, req.body);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ error: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getAllTravelExpenses(req, res) {
+  async getAll(req, res, next) {
     try {
-      let response = await TravelExpensesService.getAllTravelExpenses(req, res);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
+      const data = await TravelExpensesService.getAll(req.query);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 
-  async getIdTravelExpenses(req, res) { 
+  async getId(req, res, next) {
     try {
-      let response = await TravelExpensesService.getIdTravelExpenses(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
+      const data = await TravelExpensesService.getId(req.params.id);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  }
-
-  async updateTravelExpenses(req, res) {
-    try {
-      let response = await TravelExpensesService.updateTravelExpenses(req.body, req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(400).json({ mgs: error.message })
-    }
-  } 
-
-  async deleteTravelExpenses(req, res) {
-    try {
-      let response = await TravelExpensesService.deleteTravelExpenses(req.params);
-
-      if (response.httpStatus === 200) {
-        return res.send(response);
-      } else {
-        return res.status(response.httpStatus).json(response)
-      }
-
-    } catch (error) {
-      return res.status(200).json({ mgs: error.message})
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
 }

@@ -11,31 +11,40 @@ class Driver extends Model {
         password_hash: Sequelize.STRING,
         status: {
           type: Sequelize.ENUM,
-          values: ["ACTIVE", "INACTIVE", "INCOMPLETE"],
-          defaultValue: "ACTIVE"
+          values: ['ACTIVE', 'INACTIVE', 'INCOMPLETE'],
+          defaultValue: 'INCOMPLETE',
         },
         type_positions: {
           type: Sequelize.STRING,
-          defaultValue: "COLLABORATOR"
+          defaultValue: 'COLLABORATOR',
         },
         permission_id: Sequelize.INTEGER,
         // driver personal data
         cpf: Sequelize.STRING,
         number_cnh: Sequelize.STRING,
-        valid_cnh: Sequelize.DATEONLY,
-        date_valid_mopp: Sequelize.DATEONLY,
-        date_valid_nr20: Sequelize.DATEONLY,
-        date_valid_nr35: Sequelize.DATEONLY,
-        date_admission: Sequelize.DATEONLY,
-        date_birthday: Sequelize.DATEONLY,
+        valid_cnh: Sequelize.DATE,
+        date_valid_mopp: Sequelize.DATE,
+        date_valid_nr20: Sequelize.DATE,
+        date_valid_nr35: Sequelize.DATE,
+        date_admission: Sequelize.DATE,
+        date_birthday: Sequelize.DATE,
         // walking data
         cart: Sequelize.STRING,
         truck: Sequelize.STRING,
         // financial data
-        credit: Sequelize.DOUBLE,
-        value_fix: Sequelize.DOUBLE,
-        percentage: Sequelize.DOUBLE,
-        daily: Sequelize.DOUBLE,
+        credit: Sequelize.INTEGER,
+        transactions: {
+          type: Sequelize.ARRAY(
+            Sequelize.JSONB({
+              typeTransactions: Sequelize.STRING,
+              value: Sequelize.INTEGER,
+            })
+          ),
+          defaultValue: null,
+        },
+        value_fix: Sequelize.INTEGER,
+        percentage: Sequelize.INTEGER,
+        daily: Sequelize.INTEGER,
       },
       {
         sequelize,
@@ -53,11 +62,30 @@ class Driver extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.FinancialStatements, { foreignKey: 'driver_id', as: 'financialStatements' });
+    this.hasMany(models.FinancialStatements, {
+      foreignKey: 'driver_id',
+      as: 'financialStatements',
+    });
+    this.hasMany(models.Credit, {
+      foreignKey: 'driver_id',
+      as: 'credits',
+    });
   }
 
   checkPassword(password) {
     return bcrypt.compare(password, this.password_hash);
+  }
+
+  addTransaction(transaction) {
+    const transactions = this.transactions || [];
+    transactions.push(transaction);
+    this.transactions = transactions;
+  }
+
+  removeTransaction(index) {
+    const transactions = this.transactions || [];
+    transactions.splice(index, 1);
+    this.transactions = transactions;
   }
 }
 
