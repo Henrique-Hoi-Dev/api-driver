@@ -21,12 +21,13 @@ export default {
     };
   },
 
-  async update(body, id) {
+  async update(id) {
     const notification = await Notifications.findByPk(id);
+    if (!notification) throw Error('NOTIFICATION_NOT_FOUND');
 
-    if (!notification) throw Error('Notification not found');
     if (notification.driver_id === null)
       throw Error('Do not have permission for this notification');
+
     if (notification.read === true) throw Error('Has already been read.');
 
     await notification.update({ read: true });

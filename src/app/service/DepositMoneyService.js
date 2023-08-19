@@ -10,11 +10,11 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: user.id, status: true },
     });
-    if (!financial) throw Error('Financial statements not found');
+    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
 
     const freight = await Freight.findByPk(freight_id);
 
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     if (freight.status === 'STARTING_TRIP') {
       const result = await DepositMoney.create({
@@ -91,7 +91,7 @@ export default {
       ],
     });
 
-    if (!depositMoney) throw Error('Deposit Money not found');
+    if (!depositMoney) throw Error('DEPOSIT_NOT_FOUND');
 
     return { dataResult: depositMoney };
   },

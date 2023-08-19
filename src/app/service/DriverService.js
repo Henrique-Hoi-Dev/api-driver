@@ -22,7 +22,7 @@ export default {
       ],
     });
 
-    if (!driver) throw Error('Driver not found');
+    if (!driver) throw Error('DRIVER_NOT_FOUND');
 
     return {
       dataResult: driver,
@@ -43,37 +43,19 @@ export default {
       ),
     });
 
-    if (!(await schema.isValid(body))) throw Error('Validation failed!');
+    if (!(await schema.isValid(body))) throw Error('VALIDATION_ERROR');
 
     const { oldPassword } = body;
 
     const driver = await Driver.findByPk(id);
 
     if (oldPassword && !(await driver.checkPassword(oldPassword)))
-      throw Error('Password does not match!');
+      throw Error('PASSWORDS_NOT_MATCHED');
 
     await driver.update({ ...body });
 
     return {
-      dataResult: await Driver.findByPk(id, {
-        attributes: [
-          'id',
-          'name',
-          'name_user',
-          'number_cnh',
-          'valid_cnh',
-          'date_valid_mopp',
-          'date_valid_nr20',
-          'date_valid_nr35',
-          'cpf',
-          'date_admission',
-          'date_birthday',
-          'credit',
-          'value_fix',
-          'percentage',
-          'daily',
-        ],
-      }),
+      dataResult: await Driver.findByPk(id),
     };
   },
 };

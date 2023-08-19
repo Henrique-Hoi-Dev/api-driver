@@ -14,7 +14,7 @@ import authMiddleware from './app/middlewares/auth';
 const routes = new Router();
 
 routes
-  .post('/driver/authenticate', SessionController.sessioDriver)
+  .post('/driver/signin', SessionController.sessioDriver)
   .put('/driver/forgot-password', DriverController.forgotPassword);
 
 routes.use(authMiddleware);
@@ -24,16 +24,17 @@ routes
   .put('/driver/update-profile', DriverController.update);
 
 routes
-  .patch('/driver/financialStatement', FinancialStatementsController.update)
+  .patch('/driver/financia-statement', FinancialStatementsController.update)
   .get(
-    '/driver/financialStatement',
+    '/driver/financial-statement',
     FinancialStatementsController.getInProgress
   )
   .get(
-    '/driver/financialStatements/finished',
+    '/driver/financial-statements/finished',
     FinancialStatementsController.getAllFinished
   );
 
+// Em processo de frente em aberto
 routes
   .post('/driver/freight', FreightController.create)
   .put('/driver/freight/:id', FreightController.update)

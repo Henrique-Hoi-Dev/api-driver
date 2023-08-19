@@ -5,58 +5,57 @@ import authConfig from '../../config/auth';
 import Driver from '../models/Driver';
 
 export default {
-  async sessionDriver(headers) {
-    const { name_user, password } = headers;
-
-    const body = { name_user: name_user.toLowerCase(), password };
+  async sessionDriver(body) {
+    const { cpf, password } = body;
 
     const schema = Yup.object().shape({
-      name_user: Yup.string().required(),
+      cpf: Yup.string().required(),
       password: Yup.string().required(),
     });
 
-    if (!(await schema.isValid(body))) throw Error('Validation failed!');
+    if (!(await schema.isValid(body))) throw Error('VALIDATION_ERROR');
 
     const driver = await Driver.findOne({
-      where: { name_user: body.name_user },
+      where: { cpf: cpf },
     });
-    if (!driver) throw Error('Driver not found');
+
+    if (!driver) throw Error('DRIVER_NOT_FOUND');
+
     if (!(driver.dataValues.type_positions === 'COLLABORATOR'))
-      throw Error('You do not have permission to log into this account');
+      throw Error('INSUFFICIENT_PERMISSIONS');
 
     if (!(await driver.checkPassword(password)))
-      throw Error('Password is incorrect');
+      throw Error('INVALID_USER_PASSWORD');
 
     const { id, credit, value_fix, percentage, type_positions, status } =
       driver;
 
-    const drivers = {
+    // const drivers = {
+    //     id,
+    //     credit,
+    //     value_fix,
+    //     percentage,
+    //     type_positions,
+    //     status,
+    //   },
+    const token = jwt.sign(
+      {
         id,
-        name_user,
+        cpf,
+        type_positions,
+        status,
         credit,
         value_fix,
         percentage,
-        type_positions,
-        status,
       },
-      token = jwt.sign(
-        {
-          id,
-          type_positions,
-          name_user,
-          status,
-          credit,
-          value_fix,
-          percentage,
-        },
-        authConfig.secret,
-        {
-          expiresIn: authConfig.expiresIn,
-        }
-      );
+      authConfig.secret,
+      {
+        expiresIn: authConfig.expiresIn,
+      }
+    );
 
     return {
-      dataResult: { drivers, token },
+      dataResult: { token },
     };
   },
 };

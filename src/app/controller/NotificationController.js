@@ -13,7 +13,7 @@ class NotificationController {
 
   async update(req, res, next) {
     try {
-      const data = await NotificationService.update(req.body, req.params.id);
+      const data = await NotificationService.update(req.params.id);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));

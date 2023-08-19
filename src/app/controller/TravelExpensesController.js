@@ -5,7 +5,9 @@ class TravelExpensesController {
   async create(req, res, next) {
     try {
       const data = await TravelExpensesService.create(req.driverId, req.body);
-      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+      return res
+        .status(HttpStatus.CREATED)
+        .json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }

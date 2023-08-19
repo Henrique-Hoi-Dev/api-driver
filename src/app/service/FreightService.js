@@ -10,7 +10,7 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-    if (!financial) throw Error('Financial not found');
+    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
     if (financial.status === false)
       throw Error('This form has already been finished');
 
@@ -78,7 +78,7 @@ export default {
       ],
     });
 
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     return freight;
   },
@@ -128,7 +128,7 @@ export default {
 
   async update(body, id) {
     const freight = await Freight.findByPk(id);
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     if (freight.status === 'APPROVED') {
       const financial = await FinancialStatements.findByPk(
@@ -169,7 +169,7 @@ export default {
         id: id,
       },
     });
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     return { msg: 'Deleted freight' };
   },

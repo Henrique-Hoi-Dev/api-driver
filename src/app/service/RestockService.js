@@ -9,10 +9,10 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-    if (!financial) throw Error('Financial statements not found');
+    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
 
     const freight = await Freight.findByPk(freight_id);
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     if (freight.status === 'STARTING_TRIP') {
       const total_value_fuel = value_fuel * liters_fuel;
@@ -82,7 +82,7 @@ export default {
       ],
     });
 
-    if (!restock) throw Error('Restocks not found');
+    if (!restock) throw Error('RESTOCK_NOT_FOUND');
 
     return {
       dataResult: restock,

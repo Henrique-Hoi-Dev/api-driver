@@ -1,13 +1,14 @@
 import jwt from 'jsonwebtoken';
+import HttpStatus from 'http-status';
 import { promisify } from 'util';
 
 import authConfig from '../../config/auth';
-// faz validação do usuário para que possa fazer mudanças no seu cadastro
+
 export default async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'Driver token not found' });
+    return res.status(HttpStatus.UNAUTHORIZED).json({ error: 'INVALID_TOKEN' });
   }
 
   const [, token] = authHeader.split(' ');
@@ -20,6 +21,6 @@ export default async (req, res, next) => {
 
     return next();
   } catch (err) {
-    return res.status(401).json({ error: 'Driver token invalid' });
+    return res.status(HttpStatus.UNAUTHORIZED).json({ error: 'INVALID_TOKEN' });
   }
 };

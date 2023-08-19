@@ -72,7 +72,7 @@ export default {
       ],
     });
 
-    if (!travelExpense) throw Error('Travel Expense not found');
+    if (!travelExpense) throw Error('TRAVEL_NOT_FOUND');
 
     return {
       dataResult: travelExpense,
