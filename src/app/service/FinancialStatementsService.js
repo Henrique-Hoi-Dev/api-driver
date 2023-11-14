@@ -46,7 +46,7 @@ export default {
       where: { driver_id: id, status: true },
       include: {
         model: Freight,
-        as: 'freigth',
+        as: 'freight',
       },
     });
 
@@ -111,11 +111,7 @@ export default {
     const valoresDeposit = deposit.map((res) => res.value);
     const totalvalueDeposit = await this._calculate(valoresDeposit);
 
-    console.log(
-      '🚀 ~ file: FreightService.js:116 ~ _updateValorFinancial ~ totalvalueDeposit:',
-      totalvalueRestock,
-      totalvalueTravel
-    );
+    console.log('🚀  totalvalueDeposit:', totalvalueRestock, totalvalueTravel);
 
     await financial.update({
       total_value:

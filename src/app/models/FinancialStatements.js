@@ -40,7 +40,7 @@ class FinancialStatements extends Model {
     this.belongsTo(models.Cart, { foreignKey: 'cart_id', as: 'cart' });
     this.hasMany(models.Freight, {
       foreignKey: 'financial_statements_id',
-      as: 'freigth',
+      as: 'freight',
     });
     this.hasMany(models.DepositMoney, {
       foreignKey: 'financial_statements_id',

@@ -37,7 +37,8 @@ routes
 // Em processo de frente em aberto
 routes
   .post('/driver/freight', FreightController.create)
-  .put('/driver/freight/:id', FreightController.update)
+  .patch('/driver/freight/:id', FreightController.update)
+  .post('/driver/freight/starting-trip', FreightController.startingTrip)
   .get('/driver/freight/:id', FreightController.getId)
   .delete('/driver/freight/:id', FreightController.delete);
 

@@ -9,7 +9,7 @@ class DepositMoneyController {
         .status(HttpStatus.CREATED)
         .json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+      next(res.status(error.status).json({ mgs: error.message }));
     }
   }
 

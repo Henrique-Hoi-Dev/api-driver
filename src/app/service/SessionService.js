@@ -55,7 +55,7 @@ export default {
     );
 
     return {
-      dataResult: { token },
+      data: { token },
     };
   },
 };

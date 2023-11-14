@@ -31,6 +31,15 @@ class FreightController {
     }
   }
 
+  async startingTrip(req, res, next) {
+    try {
+      const data = await FreightService.startingTrip(req.driverId);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
   async delete(req, res, next) {
     try {
       const data = await FreightService.delete(req.params.id);

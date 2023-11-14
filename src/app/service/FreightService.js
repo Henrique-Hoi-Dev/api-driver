@@ -113,11 +113,7 @@ export default {
     const valoresDeposit = deposit.map((res) => res.value);
     const totalvalueDeposit = await this._calculate(valoresDeposit);
 
-    console.log(
-      '🚀 ~ file: FreightService.js:116 ~ _updateValorFinancial ~ totalvalueDeposit:',
-      totalvalueRestock,
-      totalvalueTravel
-    );
+    console.log('🚀 totalvalueDeposit:', totalvalueRestock, totalvalueTravel);
 
     await financial.update({
       total_value:
@@ -161,6 +157,29 @@ export default {
 
       return { dataResult: result };
     }
+  },
+
+  async startingTrip(userId) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: userId, status: true },
+      include: {
+        model: Freight,
+        as: 'freight',
+      },
+    });
+
+    const [freight] = financialStatement.freight;
+
+    if (freight.status === 'APPROVED') {
+      await freight.update({ status: 'STARTING_TRIP' });
+
+      await Notification.create({
+        content: `${financialStatement.driver_name}, Inicio a viagem!`,
+        user_id: financialStatement.creator_user_id,
+        financial_statements_id: financialStatement.id,
+      });
+    }
+    return { dataResult: await Freight.findByPk(freight.id) };
   },
 
   async delete(id) {

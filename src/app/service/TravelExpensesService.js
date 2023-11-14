@@ -2,6 +2,13 @@ import TravelExpenses from '../models/TravelExpenses';
 import FinancialStatements from '../models/FinancialStatements';
 import Freight from '../models/Freight';
 
+class CustomError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export default {
   async create(driverId, body) {
     let { freight_id } = body;
@@ -9,10 +16,10 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
+    if (!financial) throw new CustomError('FINANCIAL_NOT_FOUND', 404);
 
     const freight = await Freight.findByPk(freight_id);
-    if (!freight) throw Error('FREIGHT_NOT_FOUND');
+    if (!freight) throw new CustomError('FREIGHT_NOT_FOUND', 404);
 
     if (freight.status === 'STARTING_TRIP') {
       const result = await TravelExpenses.create({
@@ -22,7 +29,8 @@ export default {
 
       return result;
     }
-    return { msg: 'This front is not traveling' };
+
+    throw new CustomError('This front is not traveling', 404);
   },
 
   async getAll(query) {
