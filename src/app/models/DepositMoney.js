@@ -1,4 +1,5 @@
 import Sequelize, { Model } from 'sequelize';
+import { BRAZILIANBANKSENUM, DEPOSITMONEYENUM } from '../utils/enums_deposit';
 
 class DepositMoney extends Model {
   static init(sequelize) {
@@ -6,9 +7,16 @@ class DepositMoney extends Model {
       {
         financial_statements_id: Sequelize.INTEGER,
         freight_id: Sequelize.INTEGER,
-        type_transaction: Sequelize.STRING,
+        registration_date: Sequelize.DATE,
+        type_transaction: {
+          type: Sequelize.ENUM,
+          values: DEPOSITMONEYENUM,
+        },
         local: Sequelize.STRING,
-        type_bank: Sequelize.STRING,
+        type_bank: {
+          type: Sequelize.ENUM,
+          values: BRAZILIANBANKSENUM,
+        },
         value: Sequelize.INTEGER,
         proof_img: Sequelize.STRING,
         payment: {

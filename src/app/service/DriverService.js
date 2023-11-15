@@ -25,7 +25,7 @@ export default {
     if (!driver) throw Error('DRIVER_NOT_FOUND');
 
     return {
-      dataResult: driver,
+      data: driver,
     };
   },
 
@@ -55,7 +55,7 @@ export default {
     await driver.update({ ...body });
 
     return {
-      dataResult: await Driver.findByPk(id),
+      data: await Driver.findByPk(id),
     };
   },
 };

@@ -39,7 +39,7 @@ export default {
     });
 
     return {
-      dataResult: result,
+      data: result,
     };
   },
 
@@ -53,10 +53,11 @@ export default {
             'id',
             'name_establishment',
             'city',
-            'date',
             'value_fuel',
             'total_nota_value',
             'liters_fuel',
+            'registration_date',
+            'payment',
           ],
         },
         {
@@ -68,19 +69,29 @@ export default {
             'type_establishment',
             'expense_description',
             'value',
+            'registration_date',
+            'payment',
           ],
         },
         {
           model: DepositMoney,
           as: 'deposit_money',
-          attributes: ['id', 'type_transaction', 'local', 'type_bank', 'value'],
+          attributes: [
+            'id',
+            'type_transaction',
+            'local',
+            'type_bank',
+            'value',
+            'registration_date',
+            'payment',
+          ],
         },
       ],
     });
 
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return freight;
+    return { data: freight };
   },
 
   async _calculate(values) {
@@ -139,7 +150,7 @@ export default {
         financial_statements_id: financial.id,
       });
 
-      return { dataResult: await Freight.findByPk(id) };
+      return { data: await Freight.findByPk(id) };
     }
 
     if (freight.status === 'STARTING_TRIP') {
@@ -155,7 +166,7 @@ export default {
 
       await this._updateValorFinancial(result);
 
-      return { dataResult: result };
+      return { data: result };
     }
   },
 
@@ -179,7 +190,7 @@ export default {
         financial_statements_id: financialStatement.id,
       });
     }
-    return { dataResult: await Freight.findByPk(freight.id) };
+    return { data: { msg: 'Starting Trip' } };
   },
 
   async delete(id) {
@@ -190,6 +201,6 @@ export default {
     });
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return { msg: 'Deleted freight' };
+    return { data: { msg: 'Deleted freight' } };
   },
 };

@@ -8,7 +8,7 @@ class Restock extends Model {
         freight_id: Sequelize.INTEGER,
         name_establishment: Sequelize.STRING,
         city: Sequelize.STRING,
-        date: Sequelize.DATE,
+        registration_date: Sequelize.DATE,
         value_fuel: Sequelize.INTEGER,
         liters_fuel: Sequelize.INTEGER,
         total_value_fuel: Sequelize.INTEGER,

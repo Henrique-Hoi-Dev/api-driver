@@ -12,13 +12,13 @@ export default {
       sort_field = 'id',
     } = query;
 
-    const total = (
+    const totalItems = (
       await FinancialStatements.findAll({
         where: { driver_id: id, status: false },
       })
     ).length;
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(totalItems / limit);
 
     const financialStatements = await FinancialStatements.findAll({
       where: { driver_id: id, status: false },
@@ -34,8 +34,8 @@ export default {
     const currentPage = Number(page);
 
     return {
-      dataResult: financialStatements,
-      total,
+      data: financialStatements,
+      totalItems,
       totalPages,
       currentPage,
     };
@@ -51,7 +51,7 @@ export default {
     });
 
     if (!financialStatement) throw Error('FINANCIAL_NOT_FOUND');
-    return { dataResult: financialStatement };
+    return { data: financialStatement };
   },
 
   async update(body, driverId) {
@@ -78,7 +78,7 @@ export default {
 
     const financial = await FinancialStatements.findByPk(id);
 
-    return { dataResult: driver, financial: financial };
+    return { data: driver, financial: financial };
   },
 
   _calculate(values) {

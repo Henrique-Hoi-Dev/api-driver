@@ -7,7 +7,7 @@ class TravelExpenses extends Model {
         financial_statements_id: Sequelize.INTEGER,
         freight_id: Sequelize.INTEGER,
         city: Sequelize.STRING,
-        date: Sequelize.DATE,
+        registration_date: Sequelize.DATE,
         type_establishment: Sequelize.STRING,
         name_establishment: Sequelize.STRING,
         expense_description: Sequelize.STRING,
