@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 
-import authConfig from '../../config/auth';
 import Driver from '../models/Driver';
 
 export default {
@@ -30,14 +29,6 @@ export default {
     const { id, credit, value_fix, percentage, type_positions, status } =
       driver;
 
-    // const drivers = {
-    //     id,
-    //     credit,
-    //     value_fix,
-    //     percentage,
-    //     type_positions,
-    //     status,
-    //   },
     const token = jwt.sign(
       {
         id,
@@ -48,9 +39,9 @@ export default {
         value_fix,
         percentage,
       },
-      authConfig.secret,
+      process.env.TOKEN_KEY,
       {
-        expiresIn: authConfig.expiresIn,
+        expiresIn: process.env.TOKEN_EXP,
       }
     );
 

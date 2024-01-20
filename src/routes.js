@@ -15,6 +15,8 @@ const routes = new Router();
 
 routes
   .post('/driver/signin', SessionController.sessioDriver)
+  .post('/driver/code-request', DriverController.requestCodeValidation)
+  .post('/driver/code-validation', DriverController.validCodeForgotPassword)
   .put('/driver/forgot-password', DriverController.forgotPassword);
 
 routes.use(authMiddleware);

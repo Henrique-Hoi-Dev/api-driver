@@ -11,6 +11,7 @@ import DepositMoney from '../app/models/DepositMoney';
 import Notification from '../app/models/Notification';
 import FinancialStatements from '../app/models/FinancialStatements';
 import Credit from '../app/models/Credit';
+import ValidateCode from '../app/models/ValidateCode';
 
 import 'dotenv/config';
 
@@ -42,6 +43,7 @@ const models = [
   TravelExpenses,
   Restock,
   Credit,
+  ValidateCode,
 ];
 
 models
