@@ -1,11 +1,10 @@
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
-const authenticatePassword = (plainTextPassword, encryptedPassword) =>
-    bcrypt.compareSync(plainTextPassword, encryptedPassword);
+export const authenticatePassword = (plainTextPassword, encryptedPassword) =>
+  bcrypt.compareSync(plainTextPassword, encryptedPassword);
 
-const encryptPassword = (password) => bcrypt.hashSync(password, 10);
+export const encryptPassword = (password) => bcrypt.hashSync(password, 10);
 
-const generateRandomCode = (size = 3) => crypto.randomBytes(size).toString('hex').toUpperCase();
-
-module.exports = { authenticatePassword, encryptPassword, generateRandomCode };
+export const generateRandomCode = (size = 3) =>
+  crypto.randomBytes(size).toString('hex').toUpperCase();

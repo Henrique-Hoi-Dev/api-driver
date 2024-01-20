@@ -3,7 +3,7 @@ import Driver from '../models/Driver';
 import ValidateCode from '../models/ValidateCode';
 import { generateRandomCode } from '../utils/crypto';
 import { createExpirationDateFromNow } from '../utils/date';
-import { Twilio } from 'twilio';
+import Twilio from 'twilio';
 
 export default {
   async profile(id) {

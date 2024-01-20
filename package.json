@@ -26,6 +26,9 @@
     "start": "node -r esm src/server.js",
     "migrate": "sequelize db:migrate"
   },
+  "engines": {
+    "node": ">=v14.18.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "bcrypt": "^5.1.1",
