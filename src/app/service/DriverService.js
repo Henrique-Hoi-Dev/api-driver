@@ -73,7 +73,7 @@ export default {
 
       if (!user || !user.phone) throw Error('CELL_PHONE_DOES_NOT_EXIST');
 
-      const numberSuport = process.env.SUPORT_NUMBER;
+      // const numberSuport = process.env.SUPORT_NUMBER;
 
       const verificationCode = generateRandomCode();
       const expirationDate = createExpirationDateFromNow(30);
@@ -95,8 +95,8 @@ export default {
         status: 'AVAILABLE',
       });
 
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      // const authToken = process.env.TWILIO_AUTH_TOKEN;
 
       // const client = new Twilio(accountSid, authToken);
 
@@ -120,7 +120,7 @@ export default {
       //     throw Error('ERROR_SENDING_CODE');
       //   });
 
-      return {};
+      return code;
     } catch (error) {
       if (
         ['CELL_PHONE_DOES_NOT_EXIST', 'ERROR_SENDING_CODE'].includes(
