@@ -1,8 +1,8 @@
 import * as Yup from 'yup';
 import Driver from '../models/Driver';
 import ValidateCode from '../models/ValidateCode';
-import { generateRandomCode } from '../utils/crypto';
-import { createExpirationDateFromNow } from '../utils/date';
+// import { generateRandomCode } from '../utils/crypto';
+// import { createExpirationDateFromNow } from '../utils/date';
 // import { Twilio } from 'twilio';
 
 export default {
@@ -75,8 +75,8 @@ export default {
 
       // const numberSuport = process.env.SUPORT_NUMBER;
 
-      const verificationCode = generateRandomCode();
-      const expirationDate = createExpirationDateFromNow(30);
+      // const verificationCode = generateRandomCode();
+      // const expirationDate = createExpirationDateFromNow(30);
 
       await ValidateCode.update(
         { status: 'EXPIRED' },
@@ -90,8 +90,8 @@ export default {
 
       const code = await ValidateCode.create({
         cpf: user.cpf,
-        expiration_date: expirationDate,
-        code: verificationCode,
+        expiration_date: 'expirationDate',
+        code: 'verificationCode',
         status: 'AVAILABLE',
       });
 
