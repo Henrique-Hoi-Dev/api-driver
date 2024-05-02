@@ -1,7 +1,7 @@
 import express from 'express';
-import routes from './routes';
+import routes from './routers';
 import cors from 'cors';
-import sequelize from './database/sequelize';
+import sequelize from '../../database/sequelize';
 
 import 'dotenv/config';
 

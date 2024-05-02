@@ -1,15 +1,15 @@
 import { Router } from 'express';
 
-import SessionController from './app/controller/SessionController';
-import DriverController from './app/controller/DriverController';
-import FreightController from './app/controller/FreightController';
-import DepositMoneyController from './app/controller/DepositMoneyController';
-import TravelExpensesController from './app/controller/TravelExpensesController';
-import RestockController from './app/controller/RestockController';
-import FinancialStatementsController from './app/controller/FinancialStatementsController';
-import NotificationController from './app/controller/NotificationController';
+import SessionController from '../controller/SessionController';
+import DriverController from '../controller/DriverController';
+import FreightController from '../controller/FreightController';
+import DepositMoneyController from '../controller/DepositMoneyController';
+import TravelExpensesController from '../controller/TravelExpensesController';
+import RestockController from '../controller/RestockController';
+import FinancialStatementsController from '../controller/FinancialStatementsController';
+import NotificationController from '../controller/NotificationController';
 
-import authMiddleware from './app/middlewares/auth';
+import authMiddleware from '../middlewares/auth';
 
 const routes = new Router();
 
