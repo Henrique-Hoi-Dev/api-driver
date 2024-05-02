@@ -10,7 +10,7 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-    if (!financial) throw Error('Financial not found');
+    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
     if (financial.status === false)
       throw Error('This form has already been finished');
 
@@ -39,7 +39,7 @@ export default {
     });
 
     return {
-      dataResult: result,
+      data: result,
     };
   },
 
@@ -53,10 +53,11 @@ export default {
             'id',
             'name_establishment',
             'city',
-            'date',
             'value_fuel',
             'total_nota_value',
             'liters_fuel',
+            'registration_date',
+            'payment',
           ],
         },
         {
@@ -68,19 +69,29 @@ export default {
             'type_establishment',
             'expense_description',
             'value',
+            'registration_date',
+            'payment',
           ],
         },
         {
           model: DepositMoney,
           as: 'deposit_money',
-          attributes: ['id', 'type_transaction', 'local', 'type_bank', 'value'],
+          attributes: [
+            'id',
+            'type_transaction',
+            'local',
+            'type_bank',
+            'value',
+            'registration_date',
+            'payment',
+          ],
         },
       ],
     });
 
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return freight;
+    return { data: freight };
   },
 
   async _calculate(values) {
@@ -113,11 +124,7 @@ export default {
     const valoresDeposit = deposit.map((res) => res.value);
     const totalvalueDeposit = await this._calculate(valoresDeposit);
 
-    console.log(
-      '🚀 ~ file: FreightService.js:116 ~ _updateValorFinancial ~ totalvalueDeposit:',
-      totalvalueRestock,
-      totalvalueTravel
-    );
+    console.log('🚀 totalvalueDeposit:', totalvalueRestock, totalvalueTravel);
 
     await financial.update({
       total_value:
@@ -128,7 +135,7 @@ export default {
 
   async update(body, id) {
     const freight = await Freight.findByPk(id);
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     if (freight.status === 'APPROVED') {
       const financial = await FinancialStatements.findByPk(
@@ -143,7 +150,7 @@ export default {
         financial_statements_id: financial.id,
       });
 
-      return { dataResult: await Freight.findByPk(id) };
+      return { data: await Freight.findByPk(id) };
     }
 
     if (freight.status === 'STARTING_TRIP') {
@@ -159,8 +166,31 @@ export default {
 
       await this._updateValorFinancial(result);
 
-      return { dataResult: result };
+      return { data: result };
     }
+  },
+
+  async startingTrip(userId) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: userId, status: true },
+      include: {
+        model: Freight,
+        as: 'freight',
+      },
+    });
+
+    const [freight] = financialStatement.freight;
+
+    if (freight.status === 'APPROVED') {
+      await freight.update({ status: 'STARTING_TRIP' });
+
+      await Notification.create({
+        content: `${financialStatement.driver_name}, Inicio a viagem!`,
+        user_id: financialStatement.creator_user_id,
+        financial_statements_id: financialStatement.id,
+      });
+    }
+    return { data: { msg: 'Starting Trip' } };
   },
 
   async delete(id) {
@@ -169,8 +199,8 @@ export default {
         id: id,
       },
     });
-    if (!freight) throw Error('Freight not found');
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return { msg: 'Deleted freight' };
+    return { data: { msg: 'Deleted freight' } };
   },
 };

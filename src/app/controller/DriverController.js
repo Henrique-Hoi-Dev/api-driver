@@ -20,9 +20,31 @@ class DriverController {
     }
   }
 
-  async forgotPassword(req, res) {
+  async requestCodeValidation(req, res, next) {
     try {
-      const data = await DriverService.update(req, req.body.code);
+      const data = await DriverService.requestCodeValidation(req.body);
+      return res
+        .status(HttpStatus.OK)
+        .json(JSON.parse(JSON.stringify({ data: data })));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async validCodeForgotPassword(req, res, next) {
+    try {
+      const data = await DriverService.validCodeForgotPassword(req.body);
+      return res
+        .status(HttpStatus.OK)
+        .json(JSON.parse(JSON.stringify({ data: data })));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async forgotPassword(req, res, next) {
+    try {
+      const data = await DriverService.forgotPassword(req.body);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));

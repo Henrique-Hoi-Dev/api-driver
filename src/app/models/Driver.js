@@ -5,10 +5,20 @@ class Driver extends Model {
   static init(sequelize) {
     super.init(
       {
+        // info base
         name: Sequelize.STRING,
-        name_user: Sequelize.STRING,
+        phone: { type: Sequelize.STRING, unique: true },
+        email: {
+          type: Sequelize.STRING,
+          unique: true,
+        },
+        cpf: {
+          type: Sequelize.STRING,
+          unique: true,
+        },
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
+
         status: {
           type: Sequelize.ENUM,
           values: ['ACTIVE', 'INACTIVE', 'INCOMPLETE'],
@@ -19,8 +29,8 @@ class Driver extends Model {
           defaultValue: 'COLLABORATOR',
         },
         permission_id: Sequelize.INTEGER,
+
         // driver personal data
-        cpf: Sequelize.STRING,
         number_cnh: Sequelize.STRING,
         valid_cnh: Sequelize.DATE,
         date_valid_mopp: Sequelize.DATE,
@@ -28,6 +38,7 @@ class Driver extends Model {
         date_valid_nr35: Sequelize.DATE,
         date_admission: Sequelize.DATE,
         date_birthday: Sequelize.DATE,
+
         // walking data
         cart: Sequelize.STRING,
         truck: Sequelize.STRING,
