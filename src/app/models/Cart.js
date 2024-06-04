@@ -8,11 +8,9 @@ class Cart extends Model {
         cart_brand: Sequelize.STRING,
         cart_tara: Sequelize.STRING,
         cart_color: Sequelize.STRING,
-        cart_bodyworks: Sequelize.ENUM(
-          { 
-            values: ['tank', 'bulkCarrier', 'sider', 'chest', 'bucket']
-          }
-        ),
+        cart_bodyworks: Sequelize.ENUM({
+          values: ['TANK', 'BULKCARRIER', 'SIDER', 'CHEST', 'BUCKET'],
+        }),
         cart_year: Sequelize.STRING,
         cart_chassis: Sequelize.DOUBLE,
         cart_liter_capacity: Sequelize.DOUBLE,
@@ -28,7 +26,10 @@ class Cart extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.FinancialStatements, { foreignKey: 'cart_id', as: 'financialStatements' });  
+    this.hasMany(models.FinancialStatements, {
+      foreignKey: 'cart_id',
+      as: 'financialStatements',
+    });
   }
 }
 
