@@ -26,7 +26,7 @@ export default {
     if (!(await driver.checkPassword(password)))
       throw Error('INVALID_USER_PASSWORD');
 
-    const { id, credit, value_fix, percentage, type_positions, status } =
+    const { id, credit, value_fix, percentage, type_positions, status, name } =
       driver;
 
     const token = jwt.sign(
@@ -38,6 +38,7 @@ export default {
         credit,
         value_fix,
         percentage,
+        name,
       },
       process.env.TOKEN_KEY,
       {

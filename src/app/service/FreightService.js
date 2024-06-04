@@ -10,31 +10,14 @@ export default {
     const financial = await FinancialStatements.findOne({
       where: { driver_id: driverId, status: true },
     });
-    if (!financial) throw Error('FINANCIAL_NOT_FOUND');
-    if (financial.status === false)
-      throw Error('This form has already been finished');
 
-    const freight = await Freight.findAll({
-      where: { financial_statements_id: financial.id },
-    });
-
-    if (freight.length > 0) {
-      const first = freight.map((res) => res.dataValues);
-      await financial.update({
-        start_km: first[0].truck_current_km,
-      });
+    if (!financial) {
+      throw Error('FINANCIAL_NOT_FOUND');
     }
 
     const result = await Freight.create({
       ...body,
-      financial_statements_id: financial.id,
-    });
-
-    await Notification.create({
-      content: `${financial.driver_name}, Requisitou um novo check frete!`,
-      user_id: financial.creator_user_id,
-      freight_id: result.id,
-      driver_id: driverId,
+      status: 'DRAFT',
       financial_statements_id: financial.id,
     });
 
@@ -124,7 +107,7 @@ export default {
     const valoresDeposit = deposit.map((res) => res.value);
     const totalvalueDeposit = await this._calculate(valoresDeposit);
 
-    console.log('🚀 totalvalueDeposit:', totalvalueRestock, totalvalueTravel);
+    console.log('totalvalueDeposit:', totalvalueRestock, totalvalueTravel);
 
     await financial.update({
       total_value:
@@ -137,21 +120,7 @@ export default {
     const freight = await Freight.findByPk(id);
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    if (freight.status === 'APPROVED') {
-      const financial = await FinancialStatements.findByPk(
-        freight.financial_statements_id
-      );
-
-      await freight.update(body);
-
-      await Notification.create({
-        content: `${financial.driver_name}, Inicio a viagem!`,
-        user_id: financial.creator_user_id,
-        financial_statements_id: financial.id,
-      });
-
-      return { data: await Freight.findByPk(id) };
-    }
+    await freight.update(body);
 
     if (freight.status === 'STARTING_TRIP') {
       const result = await freight.update({
@@ -168,26 +137,42 @@ export default {
 
       return { data: result };
     }
+
+    return { data: await Freight.findByPk(id) };
   },
 
-  async startingTrip(userId) {
-    const financialStatement = await FinancialStatements.findOne({
-      where: { driver_id: userId, status: true },
+  async startingTrip({ freight_id, truck_current_km }, { name, id }) {
+    const financial = await FinancialStatements.findOne({
+      where: { driver_id: id, status: true },
       include: {
         model: Freight,
         as: 'freight',
       },
     });
 
-    const [freight] = financialStatement.freight;
+    const freighStartTrip = financial.freight.find(
+      (item) => item.status === 'STARTING_TRIP'
+    );
+    if (freighStartTrip) throw Error('THERE_IS_ALREADY_A_TRIP_IN_PROGRESS');
+
+    const freight = await Freight.findByPk(freight_id);
 
     if (freight.status === 'APPROVED') {
-      await freight.update({ status: 'STARTING_TRIP' });
+      await freight.update({
+        status: 'STARTING_TRIP',
+        truck_current_km: truck_current_km,
+      });
+
+      if (lastFreight) {
+        await financial.update({
+          start_km: truck_current_km,
+        });
+      }
 
       await Notification.create({
-        content: `${financialStatement.driver_name}, Inicio a viagem!`,
+        content: `${name}, Inicio a viagem!`,
         user_id: financialStatement.creator_user_id,
-        financial_statements_id: financialStatement.id,
+        financial_statements_id: freight.financial_statements_id,
       });
     }
     return { data: { msg: 'Starting Trip' } };

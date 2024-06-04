@@ -33,7 +33,7 @@ class FreightController {
 
   async startingTrip(req, res, next) {
     try {
-      const data = await FreightService.startingTrip(req.driverId);
+      const data = await FreightService.startingTrip(req.body, req.driverProps);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
