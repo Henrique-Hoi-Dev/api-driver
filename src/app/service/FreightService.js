@@ -4,15 +4,14 @@ import FinancialStatements from '../models/FinancialStatements';
 import Restock from '../models/Restock';
 import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
+import FinancialService from '../service/FinancialStatementsService';
 
 export default {
   async create(driverId, body) {
-    const financial = await FinancialStatements.findOne({
-      where: { driver_id: driverId, status: true },
-    });
+    const financial = await FinancialService.getFinancialCurrent(driverId);
 
     if (!financial) {
-      throw Error('FINANCIAL_NOT_FOUND');
+      throw Error('FINANCIAL_IN_PROGRESS');
     }
 
     const result = await Freight.create({
@@ -21,9 +20,7 @@ export default {
       financial_statements_id: financial.id,
     });
 
-    return {
-      data: result,
-    };
+    return result;
   },
 
   async getId(id) {
@@ -74,7 +71,7 @@ export default {
 
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return { data: freight };
+    return freight;
   },
 
   async _calculate(values) {
@@ -116,11 +113,23 @@ export default {
     });
   },
 
-  async update(body, id) {
+  async update(body, id, user) {
     const freight = await Freight.findByPk(id);
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     await freight.update(body);
+
+    if (body.status === 'PENDING') {
+      const financial = await FinancialService.getFinancialCurrent(user.id);
+
+      await Notification.create({
+        content: `${user.name}, Requisitou um novo check frete!`,
+        user_id: financial.creator_user_id,
+        freight_id: id,
+        driver_id: user.id,
+        financial_statements_id: financial.id,
+      });
+    }
 
     if (freight.status === 'STARTING_TRIP') {
       const result = await freight.update({
@@ -135,20 +144,14 @@ export default {
 
       await this._updateValorFinancial(result);
 
-      return { data: result };
+      return result;
     }
 
-    return { data: await Freight.findByPk(id) };
+    return await Freight.findByPk(id);
   },
 
   async startingTrip({ freight_id, truck_current_km }, { name, id }) {
-    const financial = await FinancialStatements.findOne({
-      where: { driver_id: id, status: true },
-      include: {
-        model: Freight,
-        as: 'freight',
-      },
-    });
+    const financial = await FinancialService.getFinancialCurrent(id);
 
     const freighStartTrip = financial.freight.find(
       (item) => item.status === 'STARTING_TRIP'
@@ -156,6 +159,7 @@ export default {
     if (freighStartTrip) throw Error('THERE_IS_ALREADY_A_TRIP_IN_PROGRESS');
 
     const freight = await Freight.findByPk(freight_id);
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
     if (freight.status === 'APPROVED') {
       await freight.update({
@@ -171,11 +175,41 @@ export default {
 
       await Notification.create({
         content: `${name}, Inicio a viagem!`,
-        user_id: financialStatement.creator_user_id,
+        user_id: financial.creator_user_id,
         financial_statements_id: freight.financial_statements_id,
       });
     }
     return { data: { msg: 'Starting Trip' } };
+  },
+
+  async finishedTrip({ freight_id, truck_km_completed_trip }, { name, id }) {
+    const financial = await FinancialService.getFinancialCurrent(id);
+
+    const freight = await Freight.findByPk(freight_id);
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
+
+    if (freight.status !== 'STARTING_TRIP')
+      throw Error('THIS_TRIP_IS_NOT_IN_PROGRESS_TO_FINALIZE');
+
+    if (freight.status === 'STARTING_TRIP') {
+      await freight.update({
+        status: 'FINISHED',
+        truck_km_completed_trip: truck_km_completed_trip,
+      });
+
+      if (lastFreight) {
+        await financial.update({
+          final_km: truck_km_completed_trip,
+        });
+      }
+
+      await Notification.create({
+        content: `${name}, Finalizou a viagem!`,
+        user_id: financial.creator_user_id,
+        financial_statements_id: freight.financial_statements_id,
+      });
+    }
+    return { data: { msg: 'Finished Trip' } };
   },
 
   async delete(id) {

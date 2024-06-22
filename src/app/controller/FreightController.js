@@ -7,7 +7,7 @@ class FreightController {
       const data = await FreightService.create(req.driverId, req.body);
       return res
         .status(HttpStatus.CREATED)
-        .json(JSON.parse(JSON.stringify(data)));
+        .json(JSON.parse(JSON.stringify({ data })));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
@@ -16,7 +16,9 @@ class FreightController {
   async getId(req, res, next) {
     try {
       const data = await FreightService.getId(req.params.id);
-      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+      return res
+        .status(HttpStatus.OK)
+        .json(JSON.parse(JSON.stringify({ data })));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
@@ -24,8 +26,14 @@ class FreightController {
 
   async update(req, res, next) {
     try {
-      const data = await FreightService.update(req.body, req.params.id);
-      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+      const data = await FreightService.update(
+        req.body,
+        req.params.id,
+        req.driverProps
+      );
+      return res
+        .status(HttpStatus.OK)
+        .json(JSON.parse(JSON.stringify({ data })));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
@@ -34,6 +42,15 @@ class FreightController {
   async startingTrip(req, res, next) {
     try {
       const data = await FreightService.startingTrip(req.body, req.driverProps);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async finishedTrip(req, res, next) {
+    try {
+      const data = await FreightService.finishedTrip(req.body, req.driverProps);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));

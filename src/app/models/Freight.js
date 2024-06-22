@@ -18,7 +18,7 @@ class Freight extends Model {
         status: Sequelize.ENUM({
           values: [
             'DRAFT',
-            'APPROVAL_PROCESS',
+            'PENDING',
             'APPROVED',
             'STARTING_TRIP',
             'DENIED',
