@@ -1,5 +1,6 @@
 import HttpStatus from 'http-status';
 import FreightService from '../service/FreightService';
+import { validateAndReturn } from '../utils/validFile';
 
 class FreightController {
   async create(req, res, next) {
@@ -52,6 +53,36 @@ class FreightController {
     try {
       const data = await FreightService.finishedTrip(req.body, req.driverProps);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async uploadDocuments(req, res, next) {
+    try {
+      const data = await FreightService.uploadDocuments(req, req.params);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async deleteFile(req, res, next) {
+    try {
+      const data = await FreightService.deleteFile(req.params, req.query);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async getDocuments(req, res, next) {
+    try {
+      const { fileData, contentType } = await FreightService.getDocuments(
+        req.query
+      );
+      res.set('Content-Type', validateAndReturn(contentType));
+      return res.send(fileData);
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }

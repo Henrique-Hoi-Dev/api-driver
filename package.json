@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@vonage/server-sdk": "^3.12.1",
+    "aws-sdk": "^2.1691.0",
     "axios": "^0.26.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -19,14 +20,16 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.6.2",
+    "multer": "^1.4.5-lts.1",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.4",
     "twilio": "3.49.4",
+    "uuid": "^10.0.0",
     "yup": "^0.32.11"
   },
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "cross-env NODE_ENV=development && nodemon server.js",
     "start": "node -r esm server.js",
     "migrate": "sequelize db:migrate"
   },
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.23.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "nodemon": "^2.0.19",

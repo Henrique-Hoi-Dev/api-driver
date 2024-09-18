@@ -5,6 +5,10 @@ import Restock from '../models/Restock';
 import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 import FinancialService from '../service/FinancialStatementsService';
+// import { v6 as uuidV6 } from 'uuid';
+
+import { deleteFile, getFile, sendFile } from '../providers/aws';
+import { generateRandomCode } from '../utils/crypto';
 
 export default {
   async create(driverId, body) {
@@ -148,6 +152,126 @@ export default {
     }
 
     return await Freight.findByPk(id);
+  },
+
+  async uploadDocuments(payload, { id }) {
+    const { file, body } = payload;
+    if (!file) throw Error('FILE_NOT_FOUND');
+
+    const freight = await Freight.findByPk(id);
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
+
+    if (!body.category || !body.typeImg)
+      throw Error('IMAGE_CATEGORY_OR_TYPE_NOT_FOUND');
+
+    const originalFilename = file.originalname;
+
+    const code = generateRandomCode(9);
+
+    file.name = code;
+
+    await sendFile(payload);
+
+    let infoFreight;
+
+    if (body.typeImg === 'freight_letter') {
+      infoFreight = await freight.update({
+        img_proof_freight_letter: {
+          uuid: file.name,
+          name: originalFilename,
+          mimetype: file.mimetype,
+          category: body.category,
+        },
+      });
+    }
+    if (body.typeImg === 'ticket') {
+      infoFreight = await freight.update({
+        img_proof_ticket: {
+          uuid: file.name,
+          name: originalFilename,
+          mimetype: file.mimetype,
+          category: body.category,
+        },
+      });
+    }
+    if (body.typeImg === 'cte') {
+      infoFreight = await freight.update({
+        img_proof_cte: {
+          uuid: file.name,
+          name: originalFilename,
+          mimetype: file.mimetype,
+          category: body.category,
+        },
+      });
+    }
+
+    return infoFreight;
+  },
+
+  async getDocuments({ filename, category }) {
+    try {
+      const { Body, ContentType } = await getFile({ filename, category });
+      const fileData = Buffer.from(Body);
+      return { contentType: ContentType, fileData };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async deleteFile({ id }, { typeImg }) {
+    const freight = await Freight.findByPk(id);
+    if (!freight) throw Error('FREIGHT_NOT_FOUND');
+
+    if (!typeImg) throw Error('IMAGE_TYPE_NOT_FOUND');
+
+    let infoFreight;
+
+    try {
+      if (typeImg === 'freight_letter') {
+        await this._deleteFileIntegration({
+          filename: freight.img_proof_freight_letter.uuid,
+          category: freight.img_proof_freight_letter.category,
+        });
+
+        infoFreight = await freight.update({
+          img_proof_freight_letter: {},
+        });
+      }
+
+      if (typeImg === 'ticket') {
+        await this._deleteFileIntegration({
+          filename: freight.img_proof_ticket.uuid,
+          category: freight.img_proof_ticket.category,
+        });
+
+        infoFreight = await freight.update({
+          img_proof_ticket: {},
+        });
+      }
+
+      if (typeImg === 'cte') {
+        await this._deleteFileIntegration({
+          filename: freight.img_proof_cte.uuid,
+          category: freight.img_proof_cte.category,
+        });
+
+        infoFreight = await freight.update({
+          img_proof_cte: {},
+        });
+      }
+
+      return infoFreight;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async _deleteFileIntegration({ filename, category }) {
+    try {
+      return await deleteFile({ filename, category });
+    } catch (error) {
+      throw error;
+    }
   },
 
   async startingTrip({ freight_id, truck_current_km }, { name, id }) {

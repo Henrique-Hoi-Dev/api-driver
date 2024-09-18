@@ -10,6 +10,7 @@ import FinancialStatementsController from '../controller/FinancialStatementsCont
 import NotificationController from '../controller/NotificationController';
 
 import authMiddleware from '../middlewares/auth';
+import multer from 'multer';
 
 const routes = new Router();
 
@@ -41,6 +42,13 @@ routes
   .patch('/driver/freight/:id', FreightController.update)
   .post('/driver/freight/starting-trip', FreightController.startingTrip)
   .post('/driver/freight/finished-trip', FreightController.finishedTrip)
+  .patch(
+    '/driver/freight/upload-documents/:id',
+    multer().single('file'),
+    FreightController.uploadDocuments
+  )
+  .get('/driver/freight/search-documents', FreightController.getDocuments)
+  .patch('/driver/freight/delete-documents/:id', FreightController.deleteFile)
   .get('/driver/freight/:id', FreightController.getId)
   .delete('/driver/freight/:id', FreightController.delete);
 

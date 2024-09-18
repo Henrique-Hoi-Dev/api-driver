@@ -1,4 +1,4 @@
-import Sequelize, { Model } from 'sequelize';
+import Sequelize, { DataTypes, Model } from 'sequelize';
 
 class TravelExpenses extends Model {
   static init(sequelize) {
@@ -14,6 +14,11 @@ class TravelExpenses extends Model {
         dfe: Sequelize.STRING,
         value: Sequelize.INTEGER,
         proof_img: Sequelize.STRING,
+        img_receipt: {
+          type: DataTypes.JSONB,
+          allowNull: true,
+          defaultValue: {},
+        },
         payment: {
           type: Sequelize.JSONB,
           allowNull: false,
