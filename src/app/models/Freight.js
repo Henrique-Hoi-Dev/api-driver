@@ -1,4 +1,4 @@
-import Sequelize, { Model } from 'sequelize';
+import Sequelize, { DataTypes, Model } from 'sequelize';
 
 class Freight extends Model {
   static init(sequelize) {
@@ -18,7 +18,7 @@ class Freight extends Model {
         status: Sequelize.ENUM({
           values: [
             'DRAFT',
-            'APPROVAL_PROCESS',
+            'PENDING',
             'APPROVED',
             'STARTING_TRIP',
             'DENIED',
@@ -33,9 +33,21 @@ class Freight extends Model {
         truck_km_completed_trip: Sequelize.INTEGER, // km do caminhão do final da viagem
         discharge: Sequelize.INTEGER,
 
-        img_proof_cte: Sequelize.STRING,
-        img_proof_ticket: Sequelize.STRING,
-        img_proof_freight_letter: Sequelize.STRING,
+        img_proof_cte: {
+          type: DataTypes.JSONB,
+          allowNull: true,
+          defaultValue: {},
+        },
+        img_proof_ticket: {
+          type: DataTypes.JSONB,
+          allowNull: true,
+          defaultValue: {},
+        },
+        img_proof_freight_letter: {
+          type: DataTypes.JSONB,
+          allowNull: true,
+          defaultValue: {},
+        },
       },
       {
         sequelize,

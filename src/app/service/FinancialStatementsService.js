@@ -4,6 +4,19 @@ import FinancialStatements from '../models/FinancialStatements';
 import Restock from '../models/Restock';
 
 export default {
+  async getFinancialCurrent(id) {
+    const financialStatement = await FinancialStatements.findOne({
+      where: { driver_id: id, status: true },
+      include: {
+        model: Freight,
+        as: 'freight',
+      },
+    });
+
+    if (!financialStatement) throw Error('FINANCIAL_NOT_FOUND');
+    return financialStatement;
+  },
+
   async getAllFinished(id, query) {
     const {
       page = 1,
@@ -27,7 +40,7 @@ export default {
       offset: page - 1 ? (page - 1) * limit : 0,
       include: {
         model: Freight,
-        as: 'freigth',
+        as: 'freight',
       },
     });
 
@@ -39,19 +52,6 @@ export default {
       totalPages,
       currentPage,
     };
-  },
-
-  async getInProgress(id) {
-    const financialStatement = await FinancialStatements.findOne({
-      where: { driver_id: id, status: true },
-      include: {
-        model: Freight,
-        as: 'freight',
-      },
-    });
-
-    if (!financialStatement) throw Error('FINANCIAL_NOT_FOUND');
-    return { data: financialStatement };
   },
 
   async update(body, driverId) {

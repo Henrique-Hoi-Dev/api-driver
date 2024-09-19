@@ -10,6 +10,7 @@ import FinancialStatementsController from '../controller/FinancialStatementsCont
 import NotificationController from '../controller/NotificationController';
 
 import authMiddleware from '../middlewares/auth';
+import multer from 'multer';
 
 const routes = new Router();
 
@@ -26,21 +27,28 @@ routes
   .put('/driver/update-profile', DriverController.update);
 
 routes
-  .patch('/driver/financia-statement', FinancialStatementsController.update)
+  .patch('/driver/financia', FinancialStatementsController.update)
   .get(
-    '/driver/financial-statement',
-    FinancialStatementsController.getInProgress
+    '/driver/financial/current',
+    FinancialStatementsController.getFinancialCurrent
   )
   .get(
-    '/driver/financial-statements/finished',
+    '/driver/financial/finisheds',
     FinancialStatementsController.getAllFinished
   );
 
-// Em processo de frente em aberto
 routes
   .post('/driver/freight', FreightController.create)
   .patch('/driver/freight/:id', FreightController.update)
   .post('/driver/freight/starting-trip', FreightController.startingTrip)
+  .post('/driver/freight/finished-trip', FreightController.finishedTrip)
+  .patch(
+    '/driver/freight/upload-documents/:id',
+    multer().single('file'),
+    FreightController.uploadDocuments
+  )
+  .get('/driver/freight/search-documents', FreightController.getDocuments)
+  .patch('/driver/freight/delete-documents/:id', FreightController.deleteFile)
   .get('/driver/freight/:id', FreightController.getId)
   .delete('/driver/freight/:id', FreightController.delete);
 
