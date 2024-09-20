@@ -69,6 +69,10 @@ export default {
     const depositMoney = await DepositMoney.findByPk(id);
     if (!depositMoney) throw Error('DEPOSIT_MONEY_NOT_FOUND');
 
+    if (depositMoney.img_receipt && depositMoney.img_receipt.uuid) {
+      await this.deleteFile({ id });
+    }
+
     if (!body.category) throw Error('CATEGORY_OR_TYPE_NOT_FOUND');
 
     const originalFilename = file.originalname;

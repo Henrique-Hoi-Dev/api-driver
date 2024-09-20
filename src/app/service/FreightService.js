@@ -178,6 +178,13 @@ export default {
     let infoFreight;
 
     if (body.typeImg === 'freight_letter') {
+      if (
+        freight.img_proof_freight_letter &&
+        freight.img_proof_freight_letter.uuid
+      ) {
+        await this.deleteFile({ id }, { typeImg: 'freight_letter' });
+      }
+
       infoFreight = await freight.update({
         img_proof_freight_letter: {
           uuid: file.name,
@@ -189,6 +196,10 @@ export default {
     }
 
     if (body.typeImg === 'ticket') {
+      if (freight.img_proof_ticket && freight.img_proof_ticket.uuid) {
+        await this.deleteFile({ id }, { typeImg: 'ticket' });
+      }
+
       infoFreight = await freight.update({
         img_proof_ticket: {
           uuid: file.name,
@@ -200,6 +211,10 @@ export default {
     }
 
     if (body.typeImg === 'cte') {
+      if (freight.img_proof_cte && freight.img_proof_cte.uuid) {
+        await this.deleteFile({ id }, { typeImg: 'cte' });
+      }
+
       infoFreight = await freight.update({
         img_proof_cte: {
           uuid: file.name,

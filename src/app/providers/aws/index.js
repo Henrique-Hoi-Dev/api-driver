@@ -20,6 +20,8 @@ export const sendFile = async ({ file, body }) => {
         Bucket: process.env.S3_BUCKET_NAME,
       })
       .promise();
+
+    console.log('Integration Location:', Location);
     return Location;
   } catch (error) {
     throw error;

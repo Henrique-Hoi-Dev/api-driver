@@ -51,6 +51,10 @@ export default {
     const travelExpenses = await TravelExpenses.findByPk(id);
     if (!travelExpenses) throw Error('TRAVELEXPENSES_NOT_FOUND');
 
+    if (travelExpenses.img_receipt && travelExpenses.img_receipt.uuid) {
+      await this.deleteFile({ id });
+    }
+
     if (!body.category) throw Error('CATEGORY_NOT_FOUND');
 
     const originalFilename = file.originalname;
