@@ -13,6 +13,24 @@ class TravelExpensesController {
     }
   }
 
+  async uploadDocuments(req, res, next) {
+    try {
+      const data = await TravelExpensesService.uploadDocuments(req, req.params);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
+  async deleteFile(req, res, next) {
+    try {
+      const data = await TravelExpensesService.deleteFile(req.params);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
+
   async getAll(req, res, next) {
     try {
       const data = await TravelExpensesService.getAll(req.query);

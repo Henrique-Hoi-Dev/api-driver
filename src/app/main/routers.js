@@ -52,22 +52,46 @@ routes
   .get('/driver/freight/:id', FreightController.getId)
   .delete('/driver/freight/:id', FreightController.delete);
 
-routes.get('/driver/notifications', NotificationController.getAll);
-routes.put('/driver/notifications/:id', NotificationController.update);
-
 routes
   .post('/driver/deposit', DepositMoneyController.create)
   .get('/driver/deposit/:id', DepositMoneyController.getId)
+  .patch(
+    '/driver/deposit/upload-documents/:id',
+    multer().single('file'),
+    DepositMoneyController.uploadDocuments
+  )
+  .delete(
+    '/driver/deposit/delete-documents/:id',
+    DepositMoneyController.deleteFile
+  )
   .get('/driver/deposits', DepositMoneyController.getAll);
 
 routes
   .post('/driver/travel', TravelExpensesController.create)
   .get('/driver/travel/:id', TravelExpensesController.getId)
+  .patch(
+    '/driver/travel/upload-documents/:id',
+    multer().single('file'),
+    TravelExpensesController.uploadDocuments
+  )
+  .delete(
+    '/driver/travel/delete-documents/:id',
+    TravelExpensesController.deleteFile
+  )
   .get('/driver/travels', TravelExpensesController.getAll);
 
 routes
   .post('/driver/restock', RestockController.create)
   .get('/driver/restock/:id', RestockController.getId)
+  .patch(
+    '/driver/restock/upload-documents/:id',
+    multer().single('file'),
+    RestockController.uploadDocuments
+  )
+  .delete('/driver/restock/delete-documents/:id', RestockController.deleteFile)
   .get('/driver/restocks', RestockController.getAll);
+
+routes.get('/driver/notifications', NotificationController.getAll);
+routes.put('/driver/notifications/:id', NotificationController.update);
 
 export default routes;
