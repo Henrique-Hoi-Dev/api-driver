@@ -38,6 +38,7 @@ export default {
             'name_establishment',
             'city',
             'value_fuel',
+            'img_receipt',
             'total_nota_value',
             'liters_fuel',
             'registration_date',
@@ -53,6 +54,7 @@ export default {
             'type_establishment',
             'expense_description',
             'value',
+            'img_receipt',
             'registration_date',
             'payment',
           ],
@@ -66,6 +68,7 @@ export default {
             'local',
             'type_bank',
             'value',
+            'img_receipt',
             'registration_date',
             'payment',
           ],
@@ -184,6 +187,7 @@ export default {
         },
       });
     }
+
     if (body.typeImg === 'ticket') {
       infoFreight = await freight.update({
         img_proof_ticket: {
@@ -194,6 +198,7 @@ export default {
         },
       });
     }
+
     if (body.typeImg === 'cte') {
       infoFreight = await freight.update({
         img_proof_cte: {
@@ -291,19 +296,20 @@ export default {
         truck_current_km: truck_current_km,
       });
 
-      if (lastFreight) {
-        await financial.update({
-          start_km: truck_current_km,
-        });
-      }
+      await financial.update({
+        start_km: truck_current_km,
+      });
 
       await Notification.create({
         content: `${name}, Inicio a viagem!`,
         user_id: financial.creator_user_id,
         financial_statements_id: freight.financial_statements_id,
       });
+
+      return { data: { msg: 'Starting Trip' } };
+    } else {
+      throw Error('SHIPPING_WAS_NOT_APPROVED');
     }
-    return { data: { msg: 'Starting Trip' } };
   },
 
   async finishedTrip({ freight_id, truck_km_completed_trip }, { name, id }) {
@@ -321,11 +327,9 @@ export default {
         truck_km_completed_trip: truck_km_completed_trip,
       });
 
-      if (lastFreight) {
-        await financial.update({
-          final_km: truck_km_completed_trip,
-        });
-      }
+      await financial.update({
+        final_km: truck_km_completed_trip,
+      });
 
       await Notification.create({
         content: `${name}, Finalizou a viagem!`,
