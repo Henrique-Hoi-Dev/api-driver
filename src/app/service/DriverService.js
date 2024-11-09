@@ -3,10 +3,12 @@ import Driver from '../models/Driver';
 import ValidateCode from '../models/ValidateCode';
 import { generateRandomCode } from '../utils/crypto';
 import { createExpirationDateFromNow } from '../utils/date';
-let Twilio;
-import('twilio').then((module) => {
-  Twilio = module.default;
-});
+import { sendSMS } from '../providers/aws';
+import { generateToken } from '../utils/jwt';
+// let Twilio;
+// import('twilio').then((module) => {
+//   Twilio = module.default;
+// });
 
 export default {
   async profile(id) {
@@ -96,33 +98,41 @@ export default {
         status: 'AVAILABLE',
       });
 
-      const numberSuport = process.env.SUPORT_NUMBER;
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      let resultSendSMS = await sendSMS({
+        phoneNumber: phone,
+        resetCode: code.code,
+      });
 
-      const client = new Twilio(accountSid, authToken);
+      resultSendSMS.cpf = user.cpf;
+      resultSendSMS.code = verificationCode;
 
-      await client.messages
-        .create({
-          body:
-            `Olá,\n\n` +
-            `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
-            `*Código de Verificação*: *${code.code}*\n\n` +
-            `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
-            `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`,
-          from: numberSuport, // Seu número Twilio
-          to: `whatsapp:+${phone}`, // Número do destinatário
-        })
-        .then((message) => {
-          console.log('id req', message.sid);
-          return 'Codigo enviado';
-        })
-        .catch((error) => {
-          console.log('Error', error, error.message);
-          throw Error('ERROR_SENDING_CODE');
-        });
+      // const numberSuport = process.env.SUPORT_NUMBER;
+      // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      // const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-      return code;
+      // const client = new Twilio(accountSid, authToken);
+
+      // await client.messages
+      //   .create({
+      //     body:
+      //       `Olá,\n\n` +
+      //       `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
+      //       `*Código de Verificação*: *${code.code}*\n\n` +
+      //       `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
+      //       `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`,
+      //     from: numberSuport, // Seu número Twilio
+      //     to: `whatsapp:+${phone}`, // Número do destinatário
+      //   })
+      //   .then((message) => {
+      //     console.log('id req', message.sid);
+      //     return 'Codigo enviado';
+      //   })
+      //   .catch((error) => {
+      //     console.log('Error', error, error.message);
+      //     throw Error('ERROR_SENDING_CODE');
+      //   });
+
+      return { token: generateToken(resultSendSMS) };
     } catch (error) {
       if (
         ['CELL_PHONE_DOES_NOT_EXIST', 'ERROR_SENDING_CODE'].includes(
@@ -136,9 +146,10 @@ export default {
     }
   },
 
-  async validCodeForgotPassword({ code }) {
+  async validCodeForgotPassword({ code, cpf }) {
     const validCode = await ValidateCode.findOne({
       where: {
+        cpf,
         code,
         status: 'AVAILABLE',
       },
@@ -186,8 +197,21 @@ export default {
       }
     );
 
+    const driver = await Driver.findOne({
+      where: { cpf },
+    });
+
+    if (!driver) throw Error('DRIVER_NOT_FOUND');
+
     if (upValidOk) {
-      return { valid, cpf: validCode.cpf };
+      return {
+        token: generateToken({
+          valid: true,
+          name: driver.name,
+          phone: driver.phone,
+          cpf: driver.cpf,
+        }),
+      };
     } else {
       return { valid: false, mgs: 'Erro no validar Código' };
     }

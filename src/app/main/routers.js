@@ -17,14 +17,14 @@ const routes = new Router();
 routes
   .post('/driver/signin', SessionController.sessioDriver)
   .post('/driver/code-request', DriverController.requestCodeValidation)
-  .post('/driver/code-validation', DriverController.validCodeForgotPassword)
-  .put('/driver/forgot-password', DriverController.forgotPassword);
+  .post('/driver/code-validation', DriverController.validCodeForgotPassword);
 
 routes.use(authMiddleware);
 
 routes
   .get('/driver/profile', DriverController.profile)
-  .put('/driver/update-profile', DriverController.update);
+  .put('/driver/update-profile', DriverController.update)
+  .put('/driver/forgot-password', DriverController.forgotPassword);
 
 routes
   .patch('/driver/financia', FinancialStatementsController.update)
