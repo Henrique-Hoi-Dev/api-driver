@@ -49,6 +49,7 @@ class Driver extends Model {
             Sequelize.JSONB({
               typeTransactions: Sequelize.STRING,
               value: Sequelize.INTEGER,
+              date: Sequelize.DATE,
             })
           ),
           defaultValue: null,
