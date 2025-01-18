@@ -1,12 +1,12 @@
 import States from '../models/States';
 import Cities from '../models/Cities';
-import { Op } from 'sequelize';
+import { literal, Op } from 'sequelize';
 const XLSX = require('xlsx');
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 
 export default {
-  async allCities({ search = '' }) {
+  async allCities({ search = '', uf = '' }) {
     const cities = await Cities.findAll({
       where: {
         [Op.or]: [{ name: { [Op.iLike]: `%${search}%` } }],
@@ -17,7 +17,18 @@ export default {
           model: States,
           as: 'states',
           attributes: ['uf'],
+          where: uf ? { uf: { [Op.iLike]: `%${uf}%` } } : {},
         },
+      ],
+      order: [
+        [
+          literal(`CASE 
+            WHEN "Cities"."name" ILIKE '${search}%' THEN 1 
+            ELSE 2 
+        END`),
+          'ASC',
+        ],
+        ['name', 'ASC'],
       ],
     });
 
