@@ -9,11 +9,9 @@ class User extends Model {
         email: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        type_position: Sequelize.ENUM(
-          { 
-            values: ['master', 'director',  'manager', 'collaborator']
-          }
-        ),
+        type_position: Sequelize.ENUM({
+          values: ['MASTER', 'USER', 'MANAGER', 'DIRECTOR', 'COLLABORATOR'],
+        }),
         cpf: Sequelize.STRING,
       },
       {

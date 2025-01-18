@@ -12,6 +12,8 @@ import Notification from '../app/models/Notification';
 import FinancialStatements from '../app/models/FinancialStatements';
 import Credit from '../app/models/Credit';
 import ValidateCode from '../app/models/ValidateCode';
+import Cities from '../app/models/Cities.js';
+import States from '../app/models/States.js';
 
 import 'dotenv/config';
 
@@ -43,6 +45,8 @@ const models = [
   TravelExpenses,
   Restock,
   Credit,
+  Cities,
+  States,
   ValidateCode,
 ];
 

@@ -1,5 +1,3 @@
-import httpStatus from 'http-status-codes';
-
 import Driver from '../models/Driver';
 import Notifications from '../models/Notification';
 

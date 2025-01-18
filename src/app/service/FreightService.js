@@ -6,6 +6,7 @@ import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 import FinancialService from '../service/FinancialStatementsService';
 // import { v6 as uuidV6 } from 'uuid';
+import ApiGoogle from '../providers/router_map_google';
 
 import { deleteFile, getFile, sendFile } from '../providers/aws';
 import { generateRandomCode } from '../utils/crypto';
@@ -27,8 +28,14 @@ export default {
     return result;
   },
 
+  async _googleQuery(startCity, finalCity) {
+    const kmTravel = await ApiGoogle.getRoute(startCity, finalCity, 'driving');
+
+    return kmTravel;
+  },
+
   async getId(id) {
-    const freight = await Freight.findByPk(id, {
+    let freight = await Freight.findByPk(id, {
       include: [
         {
           model: Restock,
@@ -78,7 +85,21 @@ export default {
 
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    return freight;
+    const googleTravel = await this._googleQuery(
+      freight.start_freight_city,
+      freight.final_freight_city
+    );
+
+    const durationSeconds = googleTravel.duration.value;
+
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.floor((durationSeconds % 3600) / 60);
+
+    return {
+      ...freight.toJSON(),
+      distance: googleTravel.distance.text,
+      duration: `${hours} horas e ${minutes} minutos`,
+    };
   },
 
   async _calculate(values) {
