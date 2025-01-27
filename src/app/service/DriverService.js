@@ -5,10 +5,6 @@ import { generateRandomCode } from '../utils/crypto';
 import { createExpirationDateFromNow } from '../utils/date';
 import { sendSMS } from '../providers/aws';
 import { generateToken } from '../utils/jwt';
-// let Twilio;
-// import('twilio').then((module) => {
-//   Twilio = module.default;
-// });
 
 export default {
   async profile(id) {
@@ -218,36 +214,40 @@ export default {
   },
 
   async forgotPassword(body) {
-    const schema = Yup.object().shape({
-      oldPassword: Yup.string().min(8),
-      password: Yup.string()
-        .min(8)
-        .when('oldPassword', (oldPassword, field) =>
-          oldPassword ? field.required() : field
+    try {
+      const schema = Yup.object().shape({
+        oldPassword: Yup.string().min(8),
+        password: Yup.string()
+          .min(8)
+          .when('oldPassword', (oldPassword, field) =>
+            oldPassword ? field.required() : field
+          ),
+        confirmPassword: Yup.string().when('password', (password, field) =>
+          password ? field.required().oneOf([Yup.ref('password')]) : field
         ),
-      confirmPassword: Yup.string().when('password', (password, field) =>
-        password ? field.required().oneOf([Yup.ref('password')]) : field
-      ),
-    });
+      });
 
-    if (!(await schema.isValid(body))) throw Error('VALIDATION_ERROR');
+      if (!(await schema.isValid(body))) throw Error('VALIDATION_ERROR');
 
-    const { oldPassword, password, cpf } = body;
+      const { password, cpf } = body;
 
-    const driver = await Driver.findOne({ cpf });
+      const driver = await Driver.findOne({ where: { cpf } });
 
-    if (oldPassword && !(await driver.checkPassword(oldPassword)))
-      throw Error('PASSWORDS_NOT_MATCHED');
+      // if (oldPassword && !(await driver.checkPassword(oldPassword)))
+      //   throw Error('PASSWORDS_NOT_MATCHED');
 
-    // Verifica se a nova senha é diferente da antiga
-    if (password && (await driver.checkPassword(password))) {
-      throw new Error('NEW_PASSWORD_SAME_AS_OLD');
+      // Verifica se a nova senha é diferente da antiga
+      if (password && (await driver.checkPassword(password))) {
+        throw new Error('NEW_PASSWORD_SAME_AS_OLD');
+      }
+
+      await driver.update({ password });
+
+      return {
+        mgs: 'update success',
+      };
+    } catch (error) {
+      return error;
     }
-
-    await driver.update({ ...body });
-
-    return {
-      mgs: 'update success',
-    };
   },
 };

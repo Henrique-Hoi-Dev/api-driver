@@ -47,7 +47,7 @@ class DriverController {
       const data = await DriverService.forgotPassword(req.body);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
-      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+      next(res.status(HttpStatus.BAD_REQUEST).json(error));
     }
   }
 }
