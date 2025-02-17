@@ -175,7 +175,7 @@ export default {
       return result;
     }
 
-    return await Freight.findByPk(id);
+    return await this.getId(id);
   },
 
   async uploadDocuments(payload, { id }) {
