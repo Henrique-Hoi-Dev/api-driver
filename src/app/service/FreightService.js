@@ -25,7 +25,7 @@ export default {
       financial_statements_id: financial.id,
     });
 
-    return result;
+    return await this.getId(result.id);
   },
 
   async _googleQuery(startCity, finalCity) {
