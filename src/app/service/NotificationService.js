@@ -32,4 +32,17 @@ export default {
 
     return { msg: 'successful' };
   },
+
+  async activateReceiveNotifications(body, driverId) {
+    const driver = await Driver.findByPk(driverId);
+    if (!driver) throw Error('DRIVER_NOT_FOUND');
+
+    const data = {
+      player_id: body.player_id,
+    };
+
+    await driver.update(data);
+
+    return { msg: 'successful' };
+  },
 };

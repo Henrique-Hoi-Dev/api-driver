@@ -132,6 +132,12 @@ routes
   )
   .get('/driver/restocks', authMiddleware, RestockController.getAll);
 
+routes.patch(
+  '/driver/activate/receive-notifications',
+  authMiddleware,
+  NotificationController.activateReceiveNotifications
+);
+
 routes.get(
   '/driver/notifications',
   authMiddleware,
