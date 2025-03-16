@@ -3,27 +3,40 @@ import Notifications from '../models/Notification';
 import OneSignalProvider from '../providers/oneSignal';
 
 export default {
-  async getAll(driverId) {
+  async getAll(driverId, { page = 1, limit = 10 }) {
     const checkIsDriver = await Driver.findOne({
       where: { id: driverId, type_positions: 'COLLABORATOR' },
     });
     if (!checkIsDriver) throw Error('User not is Driver');
 
-    const listOneSigal = await OneSignalProvider.listNotifications();
-    const list = listOneSigal.notifications.map((item) => ({
+    const listOneSignal = await OneSignalProvider.listNotifications();
+    const oneSignalList = listOneSignal.notifications.map((item) => ({
       title: item.headings,
       name: item.name,
       text: item.contents,
     }));
-    console.log('list::::::::::::', list);
+    console.log('OneSignal notifications:', oneSignalList);
+
+    // Busca notificações locais do banco com paginação
     const notifications = await Notifications.findAll({
-      where: { driver_id: driverId, read: false },
+      where: { driver_id: driverId },
       order: [['created_at', 'DESC']],
+      limit,
+      offset: page - 1 ? (page - 1) * limit : 0,
       attributes: ['id', 'content', 'read', 'created_at'],
     });
 
+    // Conta o total de notificações para calcular as páginas
+    const totalNotifications = await Notifications.count({
+      where: { driver_id: driverId },
+    });
+    const totalPages = Math.ceil(totalNotifications / limit);
+
     return {
-      dataResult: notifications,
+      data: notifications,
+      total: totalNotifications,
+      totalPages,
+      currentPage: Number(page),
     };
   },
 

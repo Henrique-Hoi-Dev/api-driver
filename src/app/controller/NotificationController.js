@@ -4,7 +4,7 @@ import NotificationService from '../service/NotificationService';
 class NotificationController {
   async getAll(req, res, next) {
     try {
-      const data = await NotificationService.getAll(req.driverId);
+      const data = await NotificationService.getAll(req.driverId, req.query);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
