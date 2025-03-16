@@ -1,5 +1,6 @@
 import Driver from '../models/Driver';
 import Notifications from '../models/Notification';
+import OneSignalProvider from '../providers/oneSignal';
 
 export default {
   async getAll(driverId) {
@@ -8,6 +9,13 @@ export default {
     });
     if (!checkIsDriver) throw Error('User not is Driver');
 
+    const listOneSigal = await OneSignalProvider.listNotifications();
+    const list = listOneSigal.notifications.map((item) => ({
+      title: item.headings,
+      name: item.name,
+      text: item.contents,
+    }));
+    console.log('list::::::::::::', list);
     const notifications = await Notifications.findAll({
       where: { driver_id: driverId, read: false },
       order: [['created_at', 'DESC']],
