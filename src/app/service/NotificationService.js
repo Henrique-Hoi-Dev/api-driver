@@ -41,6 +41,29 @@ export default {
     return { msg: 'successful' };
   },
 
+  async markAllRead(driverId) {
+    try {
+      if (!driverId) throw Error('DRIVERID_NOT_FOUND');
+
+      const notifications = await Notifications.findAll({
+        where: { driver_id: driverId },
+      });
+
+      if (!notifications || notifications.length === 0)
+        return { msg: 'NOTIFICATION_NOT_FOUND' };
+
+      // Atualiza todas as notificações para read: true de uma só vez
+      await Notifications.update(
+        { read: true },
+        { where: { driver_id: driverId } }
+      );
+
+      return { msg: 'successful' };
+    } catch (error) {
+      throw Error(error);
+    }
+  },
+
   async activateReceiveNotifications(body, driverId) {
     const driver = await Driver.findByPk(driverId);
     if (!driver) throw Error('DRIVER_NOT_FOUND');

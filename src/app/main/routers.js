@@ -148,6 +148,11 @@ routes.put(
   authMiddleware,
   NotificationController.update
 );
+routes.post(
+  '/driver/notifications/allread',
+  authMiddleware,
+  NotificationController.markAllRead
+);
 
 routes.get('/citis', authMiddleware, CitiesController.allCities);
 routes.get('/states', authMiddleware, StatesController.allStates);

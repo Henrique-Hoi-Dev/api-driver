@@ -31,6 +31,15 @@ class NotificationController {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
     }
   }
+
+  async markAllRead(req, res, next) {
+    try {
+      const data = await NotificationService.markAllRead(req.driverId);
+      return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
+    } catch (error) {
+      next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
+    }
+  }
 }
 
 export default new NotificationController();
