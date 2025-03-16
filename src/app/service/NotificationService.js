@@ -33,10 +33,10 @@ export default {
     const totalPages = Math.ceil(totalNotifications / limit);
 
     return {
-      data: notifications,
       total: totalNotifications,
       totalPages,
       currentPage: Number(page),
+      data: notifications,
     };
   },
 
