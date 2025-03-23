@@ -94,39 +94,20 @@ export default {
         status: 'AVAILABLE',
       });
 
+      const message =
+        `Olá,\n\n` +
+        `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
+        `*Código de Verificação*: *${code?.code}*\n\n` +
+        `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
+        `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`;
+
       let resultSendSMS = await sendSMS({
         phoneNumber: phone,
-        resetCode: code.code,
+        message,
       });
 
       resultSendSMS.cpf = user.cpf;
       resultSendSMS.code = verificationCode;
-
-      // const numberSuport = process.env.SUPORT_NUMBER;
-      // const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      // const authToken = process.env.TWILIO_AUTH_TOKEN;
-
-      // const client = new Twilio(accountSid, authToken);
-
-      // await client.messages
-      //   .create({
-      //     body:
-      //       `Olá,\n\n` +
-      //       `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
-      //       `*Código de Verificação*: *${code.code}*\n\n` +
-      //       `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
-      //       `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`,
-      //     from: numberSuport, // Seu número Twilio
-      //     to: `whatsapp:+${phone}`, // Número do destinatário
-      //   })
-      //   .then((message) => {
-      //     console.log('id req', message.sid);
-      //     return 'Codigo enviado';
-      //   })
-      //   .catch((error) => {
-      //     console.log('Error', error, error.message);
-      //     throw Error('ERROR_SENDING_CODE');
-      //   });
 
       return { token: generateToken(resultSendSMS) };
     } catch (error) {

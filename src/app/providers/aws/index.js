@@ -11,14 +11,9 @@ AWS.config.update({
 const s3 = new AWS.S3();
 const sns = new AWS.SNS();
 
-export const sendSMS = async ({ phoneNumber, resetCode }) => {
+export const sendSMS = async ({ phoneNumber, message }) => {
   const params = {
-    Message:
-      `Olá,\n\n` +
-      `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
-      `*Código de Verificação*: *${resetCode}*\n\n` +
-      `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
-      `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`,
+    Message: message,
     PhoneNumber: phoneNumber, // Número do celular do usuário, no formato +5511999999999
   };
 
