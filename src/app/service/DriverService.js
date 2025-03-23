@@ -97,7 +97,7 @@ export default {
       const message =
         `Olá,\n\n` +
         `Você solicitou uma redefinição de senha em LOGBOOK. Use o código de verificação abaixo para prosseguir com a redefinição:\n\n` +
-        `*Código de Verificação*: *${code?.code}*\n\n` +
+        `*Código de Verificação*: *${code.code}*\n\n` +
         `Por questões de segurança, este código é válido por apenas 15 minutos. Não compartilhe este código com ninguém.\n\n` +
         `Se você não solicitou uma redefinição de senha, por favor ignore esta mensagem.`;
 
