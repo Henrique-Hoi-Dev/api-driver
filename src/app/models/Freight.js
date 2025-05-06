@@ -32,6 +32,12 @@ class Freight extends Model {
         toll_value: Sequelize.INTEGER, // valor do pedagio
         truck_km_completed_trip: Sequelize.INTEGER, // km do caminhão do final da viagem
         discharge: Sequelize.INTEGER,
+        distance: {
+          type: Sequelize.STRING,
+        },
+        duration: {
+          type: Sequelize.STRING,
+        },
 
         img_proof_cte: {
           type: DataTypes.JSONB,

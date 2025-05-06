@@ -5,6 +5,7 @@ import Restock from '../models/Restock';
 import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 import FinancialService from '../service/FinancialStatementsService';
+
 // import { v6 as uuidV6 } from 'uuid';
 import ApiGoogle from '../providers/router_map_google';
 
@@ -12,12 +13,16 @@ import { deleteFile, getFile, sendFile } from '../providers/aws';
 import { generateRandomCode } from '../utils/crypto';
 
 export default {
-  async create(driverId, body) {
-    const financial = await FinancialService.getFinancialCurrent(driverId);
-
+  async _financialDriver(id) {
+    const financial = await FinancialService.getFinancialCurrent(id);
     if (!financial) {
       throw Error('FINANCIAL_IN_PROGRESS');
     }
+    return financial;
+  },
+
+  async create(driverId, body) {
+    const financial = await this._financialDriver(driverId);
 
     const result = await Freight.create({
       ...body,
@@ -25,7 +30,11 @@ export default {
       financial_statements_id: financial.id,
     });
 
-    return await this.getId(result.id);
+    if (!result) {
+      throw Error('ERRO_CREATE_FREIGHT');
+    }
+
+    return await this.getId(result.id, { driverId });
   },
 
   async _googleQuery(startCity, finalCity) {
@@ -34,8 +43,17 @@ export default {
     return kmTravel;
   },
 
-  async getId(id) {
-    let freight = await Freight.findByPk(id, {
+  async getId(id, { driverId, changedDestiny = false }, financialId) {
+    let financial = await this._financialDriver(driverId);
+
+    if (!financial && financialId) {
+      financial = await FinancialStatements.findByPk(financialId);
+    }
+
+    let freight = await Freight.findOne({
+      where: { id: id, financial_statements_id: financial.id },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      rejectOnEmpty: true,
       include: [
         {
           model: Restock,
@@ -85,21 +103,23 @@ export default {
 
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    const googleTravel = await this._googleQuery(
-      freight.start_freight_city,
-      freight.final_freight_city
-    );
+    if (!financialId && changedDestiny) {
+      const origin = freight.start_freight_city;
+      const destination = freight.final_freight_city;
 
-    const durationSeconds = googleTravel.duration.value;
+      const googleTravel = await this._googleQuery(origin, destination);
 
-    const hours = Math.floor(durationSeconds / 3600);
-    const minutes = Math.floor((durationSeconds % 3600) / 60);
+      const seconds = googleTravel.duration.value;
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
 
-    return {
-      ...freight.toJSON(),
-      distance: googleTravel.distance.text,
-      duration: `${hours} horas e ${minutes} minutos`,
-    };
+      await freight.update({
+        distance: googleTravel.distance.text,
+        duration: `${hours} horas e ${minutes} minutos`,
+      });
+    }
+
+    return freight;
   },
 
   async _calculate(values) {
@@ -141,20 +161,40 @@ export default {
     });
   },
 
-  async update(body, id, user) {
-    const freight = await Freight.findByPk(id);
+  async update(body, id, { user, driverId }) {
+    let changedDestiny = false;
+    const financial = await this._financialDriver(driverId);
+
+    const freight = await Freight.findOne({
+      where: { id: id, financial_statements_id: financial.id },
+    });
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
+
+    const normalize = (s) => (s ?? '').toLowerCase().trim();
+
+    const originUI = normalize(body.start_freight_city);
+    const destinationUI = normalize(body.final_freight_city);
+    const originDB = normalize(freight.start_freight_city);
+    const destinationDB = normalize(freight.final_freight_city);
+
+    const precisaDeRota =
+      !freight.distance || // falta distância
+      !freight.duration || // ou falta duração
+      (originUI && originUI !== originDB) || // ou origem mudou
+      (destinationUI && destinationUI !== destinationDB); // ou destino mudou
+
+    if (precisaDeRota) {
+      changedDestiny = true;
+    }
 
     await freight.update(body);
 
     if (body.status === 'PENDING') {
-      const financial = await FinancialService.getFinancialCurrent(user.id);
-
       await Notification.create({
         content: `${user.name}, Requisitou um novo check frete!`,
         user_id: financial.creator_user_id,
         freight_id: id,
-        driver_id: user.id,
+        driver_id: driverId,
         financial_statements_id: financial.id,
       });
     }
@@ -175,7 +215,10 @@ export default {
       return result;
     }
 
-    return await this.getId(id);
+    return await this.getId(id, {
+      driverId,
+      changedDestiny,
+    });
   },
 
   async uploadDocuments(payload, { id }) {
@@ -376,10 +419,13 @@ export default {
     return { data: { msg: 'Finished Trip' } };
   },
 
-  async delete(id) {
+  async delete(id, { driverId }) {
+    financial = await this._financialDriver(driverId);
+
     const freight = await Freight.destroy({
       where: {
         id: id,
+        financial_statements_id: financial.id,
       },
     });
     if (!freight) throw Error('FREIGHT_NOT_FOUND');

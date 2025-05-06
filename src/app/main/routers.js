@@ -77,8 +77,7 @@ routes
     FreightController.deleteFile
   )
   .get(
-    '/driver/freight/:id',
-    authMiddleware,
+    '/driver/freight/:id/:financialId',
     authMiddleware,
     FreightController.getId
   )

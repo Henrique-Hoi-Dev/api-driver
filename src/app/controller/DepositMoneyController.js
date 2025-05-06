@@ -4,7 +4,7 @@ import DepositMoneyService from '../service/DepositMoneyService';
 class DepositMoneyController {
   async create(req, res, next) {
     try {
-      const data = await DepositMoneyService.create(req.driverProps, req.body);
+      const data = await DepositMoneyService.create(req.user, req.body);
       return res
         .status(HttpStatus.CREATED)
         .json(JSON.parse(JSON.stringify(data)));

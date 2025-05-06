@@ -16,7 +16,11 @@ class FreightController {
 
   async getId(req, res, next) {
     try {
-      const data = await FreightService.getId(req.params.id);
+      const data = await FreightService.getId(
+        req.params.id,
+        req,
+        req.params.financialId
+      );
       return res
         .status(HttpStatus.OK)
         .json(JSON.parse(JSON.stringify({ data })));
@@ -27,11 +31,7 @@ class FreightController {
 
   async update(req, res, next) {
     try {
-      const data = await FreightService.update(
-        req.body,
-        req.params.id,
-        req.driverProps
-      );
+      const data = await FreightService.update(req.body, req.params.id, req);
       return res
         .status(HttpStatus.OK)
         .json(JSON.parse(JSON.stringify({ data })));
@@ -42,7 +42,7 @@ class FreightController {
 
   async startingTrip(req, res, next) {
     try {
-      const data = await FreightService.startingTrip(req.body, req.driverProps);
+      const data = await FreightService.startingTrip(req.body, req.user);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
@@ -51,7 +51,7 @@ class FreightController {
 
   async finishedTrip(req, res, next) {
     try {
-      const data = await FreightService.finishedTrip(req.body, req.driverProps);
+      const data = await FreightService.finishedTrip(req.body, req.user);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
@@ -90,7 +90,7 @@ class FreightController {
 
   async delete(req, res, next) {
     try {
-      const data = await FreightService.delete(req.params.id);
+      const data = await FreightService.delete(req.params.id, req);
       return res.status(HttpStatus.OK).json(JSON.parse(JSON.stringify(data)));
     } catch (error) {
       next(res.status(HttpStatus.BAD_REQUEST).json({ mgs: error.message }));
