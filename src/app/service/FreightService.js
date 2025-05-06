@@ -6,7 +6,6 @@ import TravelExpenses from '../models/TravelExpenses';
 import DepositMoney from '../models/DepositMoney';
 import FinancialService from '../service/FinancialStatementsService';
 
-// import { v6 as uuidV6 } from 'uuid';
 import ApiGoogle from '../providers/router_map_google';
 
 import { deleteFile, getFile, sendFile } from '../providers/aws';
@@ -170,12 +169,12 @@ export default {
     });
     if (!freight) throw Error('FREIGHT_NOT_FOUND');
 
-    const normalize = (s) => (s ?? '').toLowerCase().trim();
+    const normalize = (s) => s.toLowerCase().trim();
 
-    const originUI = normalize(body.start_freight_city);
-    const destinationUI = normalize(body.final_freight_city);
-    const originDB = normalize(freight.start_freight_city);
-    const destinationDB = normalize(freight.final_freight_city);
+    const originUI = normalize(body.start_freight_city || '');
+    const destinationUI = normalize(body.final_freight_city || '');
+    const originDB = normalize(freight.start_freight_city || '');
+    const destinationDB = normalize(freight.final_freight_city || '');
 
     const precisaDeRota =
       !freight.distance || // falta distância
